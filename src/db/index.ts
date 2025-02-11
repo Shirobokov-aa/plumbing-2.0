@@ -6,6 +6,9 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-const db = drizzle(pool);
+export const db = drizzle(pool);
 
-export default db;
+// import { drizzle } from 'drizzle-orm/vercel-postgres'
+// import { sql } from '@vercel/postgres'
+
+// export const db = drizzle(sql)

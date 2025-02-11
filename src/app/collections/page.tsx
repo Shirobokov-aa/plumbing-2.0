@@ -2,113 +2,24 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
+import { getCollections } from "@/app/actions/collections";
 
-interface CollectionItem {
-  id: number;
-  image: string;
-  title: string;
-  desc: string;
-  link: string;
-  flexDirection: "xl:flex-row" | "xl:flex-row-reverse";
-}
+// interface CollectionItem {
+//   id: number;
+//   image: string;
+//   title: string;
+//   desc: string;
+//   link: string;
+//   flexDirection: "xl:flex-row" | "xl:flex-row-reverse";
+// }
 
-const COLLECTIONS: CollectionItem[] = [
-  {
-    id: 1,
-    image: "/img/item-era.png",
-    title: "ERA",
-    desc: "Коллекция ERA воплощает гармонию современного дизайна и классических традиций. Элегантные формы, высококачественные материалы и инновационные технологии создают идеальный баланс между эстетикой и функциональностью. Каждая деталь этой коллекции отражает стремление к совершенству и долговечности, предлагая стильные решения для ванной комнаты, которые подходят для самых разных интерьеров.",
-    link: "/",
-    flexDirection: "xl:flex-row",
-  },
-  {
-    id: 2,
-    image: "/img/item-une.png",
-    title: "UNE",
-    desc: "Коллекция  UNE  сочетает в себе минимализм и изысканность, создавая атмосферу гармонии и единства в интерьере. Простота линий, элегантные формы и современная технология делают эту коллекцию идеальным выбором для тех, кто ценит сдержанный стиль и практичность. UNE — это воплощение единства функциональности и эстетики, обеспечивающее комфорт и современный вид вашей ванной комнаты.",
-    link: "/",
-    flexDirection: "xl:flex-row-reverse",
-  },
-  {
-    id: 3,
-    image: "/img/item-ino.png",
-    title: "INO",
-    desc: "Коллекция  INO  олицетворяет утонченность, элегантность и мягкость форм. Каждая деталь продумана до мелочей, сочетая изысканный дизайн с высоким качеством. Легкие линии и плавные контуры создают атмосферу гармонии и комфорта, придавая ванной комнате неповторимый стиль и утонченную женственность. INO — это идеальный выбор для тех, кто ценит изысканную красоту и функциональность в интерьере.",
-    link: "/",
-    flexDirection: "xl:flex-row",
-  },
-  {
-    id: 4,
-    image: "/img/item-ego.png",
-    title: "EGO",
-    desc: "Коллекция  EGO  отражает смелость и индивидуальность. Современные формы, уникальные дизайнерские решения и высококачественные материалы позволяют каждому создать уникальное пространство, соответствующее собственному стилю. EGO — это идеальный выбор для тех, кто стремится подчеркнуть свою индивидуальность и самовыражение через функциональные и эстетичные элементы интерьера ванной комнаты.",
-    link: "/",
-    flexDirection: "xl:flex-row-reverse",
-  },
-  {
-    id: 5,
-    image: "/img/item-amo.png",
-    title: "AMO",
-    desc: "Коллекция  AMO объединяет элегантный дизайн и функциональность. Ее модели отличаются плавными, гармоничными линиями и современными технологиями, предлагая комфорт и эстетическое наслаждение. В коллекции представлены унитазы, раковины, смесители и аксессуары, выполненные из высококачественных материалов с акцентом на долговечность и простоту ухода. AMO идеально подходит для тех, кто ценит утонченную красоту и инновационные решения.",
-    link: "/",
-    flexDirection: "xl:flex-row",
-  },
-  {
-    id: 6,
-    image: "/img/item-sono.png",
-    title: "SONO",
-    desc: "Коллекция  SONO  сочетает в себе современный минималистичный дизайн и инновационные технологии. Модели этой серии характеризуются плавными формами и гармоничными линиями, создавая атмосферу тишины и уюта в ванной комнате. Особое внимание уделено акустическому комфорту, а также долговечности и простоте использования. SONO — это идеальный выбор для тех, кто ценит высокое качество, эстетическую чистоту и гармонию звуков в своем пространстве.",
-    link: "/",
-    flexDirection: "xl:flex-row-reverse",
-  },
-  {
-    id: 7,
-    image: "/img/item-push.png",
-    title: "PUSH",
-    desc: "Коллекция PUSH  — это инновационное решение для тех, кто ценит простоту и функциональность. Модели серии оснащены механизмами с кнопочным управлением, которые обеспечивают легкость в использовании и надежность. Унитазы, смесители и аксессуары с системой PUSH отличаются современным дизайном, минимализмом и высокой эргономичностью. Эта коллекция идеально подходит для создания удобного и стильного пространства, где каждая деталь продумана до мелочей.",
-    link: "/",
-    flexDirection: "xl:flex-row",
-  },
-  {
-    id: 8,
-    image: "/img/item-twist.png",
-    title: "TWIST",
-    desc: "Коллекция  TWIST  привлекает внимание своей динамичной формой и инновационными механиками. Модели этой серии выполнены с акцентом на плавные линии и уникальные поворотные элементы, которые добавляют функциональности и оригинальности. В смесителях и аксессуарах используется технология вращающихся частей, обеспечивающая удобство в регулировке и повышенный комфорт. TWIST — это идеальное сочетание утонченного дизайна и практичности, подходящее для тех, кто ценит современный стиль и функциональные решения.",
-    link: "/",
-    flexDirection: "xl:flex-row-reverse",
-  },
-  {
-    id: 9,
-    image: "/img/item-touch.png",
-    title: "TOUCH",
-    desc: "Коллекция  TOUCH воплощает в себе современную элегантность и технологичность. Модели серии предлагают интуитивно понятное управление и инновационные решения, такие как сенсорные и термостатические смесители. Каждая деталь разработана с акцентом на удобство в использовании и комфорт, а изысканные формы и высококачественные материалы подчеркивают стиль и практичность. TOUCH — это идеальный выбор для тех, кто ищет сочетание передовых технологий и изысканного дизайна в ванной комнате.",
-    link: "/",
-    flexDirection: "xl:flex-row",
-  },
-];
+export default async function Collections() {
+  const { collections, error } = await getCollections();
 
-function CollectionCard({ item }: { item: CollectionItem }) {
-  return (
-    <div className={`flex ${item.flexDirection} flex-col-reverse xl:gap-24 gap-5`}>
-      <div className="xl:max-w-[526px] w-full">
-        <Image src={item.image} alt={item.title} width={526} height={526} className="object-contain" />
-      </div>
-      <div className="xl:max-w-[614px] w-full flex flex-col justify-around">
-        <div className="flex flex-col gap-11">
-          <h2 className="lg:text-colH2 text-colH2Lg">{item.title}</h2>
-          <p className="lg:text-desc">{item.desc}</p>
-        </div>
-        <div className="xl:pt-0 pt-10">
-          <Link href={`/collections/collection-detail/${item.title.toLowerCase()}`} className="text-desc border-b border-black">
-            Посмотреть
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+  if (error) {
+    return <div>Ошибка загрузки коллекций: {error}</div>;
+  }
 
-export default function Collections() {
   return (
     <div>
       <Header defaultTextColor="text-black" activeTextColor="text-black" />
@@ -117,8 +28,26 @@ export default function Collections() {
           <h2 className="lg:text-h2 text-h2Lg">Коллекции</h2>
         </div>
         <div className="flex flex-col gap-24 pt-24">
-          {COLLECTIONS.map((item) => (
-            <CollectionCard key={item.id} item={item} />
+          {collections?.map((item) => (
+            <div
+              key={item.id}
+              className={`flex ${item.flexDirection} flex-col-reverse xl:gap-24 gap-5`}
+            >
+              <div className="xl:max-w-[526px] w-full">
+                <Image src={item.image} alt={item.title} width={526} height={526} className="object-contain" />
+              </div>
+              <div className="xl:max-w-[614px] w-full flex flex-col justify-around">
+                <div className="flex flex-col gap-11">
+                  <h2 className="lg:text-colH2 text-colH2Lg">{item.title}</h2>
+                  <p className="lg:text-desc">{item.desc}</p>
+                </div>
+                <div className="xl:pt-0 pt-10">
+                  <Link href={`/collections/collection-detail/${item.title.toLowerCase()}`} className="text-desc border-b border-black">
+                    Посмотреть
+                  </Link>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </section>
