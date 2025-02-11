@@ -1,0 +1,1 @@
+ALTER TABLE "collection_previews" ALTER COLUMN "image" SET DATA TYPE varchar(10000);

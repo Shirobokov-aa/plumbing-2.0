@@ -1,26 +1,44 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
-import { getCollections } from "@/app/actions/collections"
-import { useSections } from "../contexts/SectionsContext"
+import { getCollections, deleteCollectionPreview } from "@/app/actions/collections"
+import { useRouter } from "next/navigation"
+
+type Collection = {
+  id: number
+  image: string
+  link: string
+  title: string
+  desc: string
+  flexDirection: string
+}
 
 export default function CollectionsAdmin() {
-  const { collections, updateCollections } = useSections()
+  const [collections, setCollections] = useState<Collection[]>([])
+  const router = useRouter()
 
   useEffect(() => {
-    const fetchCollections = async () => {
-      const { collections: fetchedCollections } = await getCollections()
-      if (fetchedCollections) {
-        updateCollections(fetchedCollections)
+    const loadCollections = async () => {
+      const { collections: data } = await getCollections()
+      if (data) setCollections(data)
+    }
+    loadCollections()
+  }, [])
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту коллекцию?')) {
+      const response = await deleteCollectionPreview(id)
+      if (response.success) {
+        router.refresh()
+      } else {
+        console.error('Ошибка при удалении:', response.error)
       }
     }
-
-    fetchCollections()
-  }, [updateCollections])
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -31,9 +49,9 @@ export default function CollectionsAdmin() {
         </Link>
       </div>
 
-      <div className="grid gap-6">
-        {collections.map((collection) => (
-          <Card key={collection.id}>
+      <div className="flex flex-wrap gap-6">
+        {collections?.map((collection) => (
+          <Card key={collection.id} className="w-full lg:w-[30%]">
             <CardHeader>
               <CardTitle>{collection.title}</CardTitle>
             </CardHeader>
@@ -51,6 +69,12 @@ export default function CollectionsAdmin() {
                 <Link href={`/admin/collections/edit/${collection.id}`}>
                   <Button variant="outline">Редактировать</Button>
                 </Link>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDelete(collection.id)}
+                >
+                  Удалить
+                </Button>
               </div>
             </CardContent>
           </Card>

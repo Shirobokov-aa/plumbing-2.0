@@ -1,208 +1,151 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { useSections } from "@/app/admin/contexts/SectionsContext"
+import { useRouter } from "next/navigation"
+import { use } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
-import type { CollectionDetail } from "@/app/admin/contexts/SectionsContext"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getCollectionPreview, updateCollectionPreview } from "@/app/actions/collections"
 
-type SectionKeys = "sections" | "sections2"
-type ObjectKeys = keyof CollectionDetail
+type Preview = {
+  image: string
+  title: string
+  desc: string
+  flexDirection: "xl:flex-row" | "xl:flex-row-reverse"
+  link: string
+}
 
-export default function EditCollectionPage() {
-  const { id } = useParams()
-  const { collectionDetails, updateCollectionDetail } = useSections()
-  const [collection, setCollection] = useState<CollectionDetail | undefined>(
-    collectionDetails.find((c) => c.id === Number(id)),
-  )
+export default function EditCollectionPreview({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
+  const router = useRouter()
+  const [preview, setPreview] = useState<Preview>({
+    image: "",
+    title: "",
+    desc: "",
+    flexDirection: "xl:flex-row",
+    link: ""
+  })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const foundCollection = collectionDetails.find((c) => c.id === Number(id))
-    setCollection(foundCollection)
-  }, [collectionDetails, id])
+    const loadPreview = async () => {
+      const { collection } = await getCollectionPreview(Number(resolvedParams.id))
+      if (collection) {
+        setPreview({
+          image: collection.image,
+          title: collection.title,
+          desc: collection.desc,
+          flexDirection: collection.flexDirection as "xl:flex-row" | "xl:flex-row-reverse",
+          link: collection.link
+        })
+        setLoading(false)
+      }
+    }
+    loadPreview()
+  }, [resolvedParams.id])
 
-  if (!collection) {
-    return <div>Collection not found</div>
+  if (loading) {
+    return <div>Loading...</div>
   }
 
-  const handleSave = () => {
-    if (collection) {
-      updateCollectionDetail(collection.id, collection)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const response = await updateCollectionPreview(Number(resolvedParams.id), preview)
+
+    if (response.success) {
+      router.push('/admin/collections')
+      router.refresh()
+    } else {
+      console.error('Ошибка:', response.error)
     }
   }
 
-  const handleChange = (section: ObjectKeys, field: string, value: string | object) => {
-    setCollection((prev) => {
-      if (!prev) return prev
-      if (section === "banner") {
-        return {
-          ...prev,
-          banner: {
-            ...prev.banner,
-            [field]: value,
-          },
-        }
-      }
-      if (typeof prev[section] === "object" && prev[section] !== null) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [field]: value,
-          },
-        }
-      }
-      return prev
-    })
-  }
-
-  const handleImageUpload = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    section: keyof CollectionDetail,
-    index: number,
-  ) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setCollection((prev) => {
-          if (!prev) return prev
-          if (section === "banner") {
-            return {
-              ...prev,
-              banner: {
-                ...prev.banner,
-                image: reader.result as string,
-              },
-            }
-          } else if (section in prev && Array.isArray(prev[section])) {
-            const newSection = [...prev[section as SectionKeys]]
-            if (newSection[index] && "images" in newSection[index]) {
-              newSection[index] = {
-                ...newSection[index],
-                images: [...(newSection[index].images || []), { src: reader.result as string, alt: "" }],
-              }
-            }
-            return {
-              ...prev,
-              [section]: newSection,
-            }
-          }
-          return prev
-        })
+        setPreview(prev => ({
+          ...prev,
+          image: reader.result as string
+        }))
       }
       reader.readAsDataURL(file)
     }
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Edit Collection: {collection.name}</h1>
-
-      {/* Banner Section */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Banner</h2>
-        <Input
-          value={collection.banner.title}
-          onChange={(e) => handleChange("banner", "title", e.target.value)}
-          placeholder="Banner Title"
-        />
-        <Textarea
-          value={collection.banner.description}
-          onChange={(e) => handleChange("banner", "description", e.target.value)}
-          placeholder="Banner Description"
-        />
-        <Input
-          value={collection.banner.link.text}
-          onChange={(e) => handleChange("banner", "link", { ...collection.banner.link, text: e.target.value })}
-          placeholder="Banner Link Text"
-        />
-        <Input
-          value={collection.banner.link.url}
-          onChange={(e) => handleChange("banner", "link", { ...collection.banner.link, url: e.target.value })}
-          placeholder="Banner Link URL"
-        />
-        <div>
-          <Label>Banner Image</Label>
-          <Image src={collection.banner.image || "/placeholder.svg"} alt="Banner" width={200} height={100} />
-          <Input type="file" onChange={(e) => handleImageUpload(e, "banner", 0)} accept="image/*" />
-        </div>
-      </div>
-
-      {/* Sections */}
-      {(["sections", "sections2", "sections3", "sections4"] as const).map((sectionType) => (
-        <div key={sectionType} className="space-y-4">
-          <h2 className="text-2xl font-semibold">{sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}</h2>
-          {collection[sectionType].map((section, index) => (
-            <div key={index} className="border p-4 rounded">
-              <Input
-                value={section.title}
-                onChange={(e) => {
-                  const newSections = [...collection[sectionType]]
-                  newSections[index] = { ...newSections[index], title: e.target.value }
-                  setCollection({ ...collection, [sectionType]: newSections })
-                }}
-                placeholder="Section Title"
-              />
-              <Textarea
-                value={section.description}
-                onChange={(e) => {
-                  const newSections = [...collection[sectionType]]
-                  newSections[index] = { ...newSections[index], description: e.target.value }
-                  setCollection({ ...collection, [sectionType]: newSections })
-                }}
-                placeholder="Section Description"
-              />
-              {"link" in section && section.link && (
-                <>
-                  <Input
-                    value={section.link.text}
-                    onChange={(e) => {
-                      const newSections = [...collection[sectionType]]
-                      newSections[index] = { ...newSections[index], link: { ...section.link, text: e.target.value } }
-                      setCollection({ ...collection, [sectionType]: newSections })
-                    }}
-                    placeholder="Link Text"
-                  />
-                  <Input
-                    value={section.link.url}
-                    onChange={(e) => {
-                      const newSections = [...collection[sectionType]]
-                      newSections[index] = { ...newSections[index], link: { ...section.link, url: e.target.value } }
-                      setCollection({ ...collection, [sectionType]: newSections })
-                    }}
-                    placeholder="Link URL"
-                  />
-                </>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <h1 className="text-3xl font-bold">Редактирование коллекции (превью)</h1>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Редактировать коллекцию</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Заголовок</Label>
+            <Input
+              value={preview.title}
+              onChange={(e) => setPreview(prev => ({ ...prev, title: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label>Описание</Label>
+            <Textarea
+              value={preview.desc}
+              onChange={(e) => setPreview(prev => ({ ...prev, desc: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <Label>Направление flex</Label>
+            <Select
+              value={preview.flexDirection}
+              onValueChange={(value) => setPreview(prev => ({
+                ...prev,
+                flexDirection: value as "xl:flex-row" | "xl:flex-row-reverse"
+              }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите направление" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="xl:flex-row">Слева направо</SelectItem>
+                <SelectItem value="xl:flex-row-reverse">Справа налево</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Изображение</Label>
+            <div className="space-y-2">
+              {preview.image && (
+                <Image
+                  width={300}
+                  height={300}
+                  src={preview.image}
+                  alt="Предпросмотр"
+                  className="w-full h-40 object-contain"
+                />
               )}
-              {section.images &&
-                section.images.map((image, imageIndex) => (
-                  <div key={imageIndex}>
-                    <Label>Image {imageIndex + 1}</Label>
-                    <Image src={image.src || "/placeholder.svg"} alt={image.alt} width={100} height={100} />
-                    <Input type="file" onChange={(e) => handleImageUpload(e, sectionType, index)} accept="image/*" />
-                    <Input
-                      value={image.alt}
-                      onChange={(e) => {
-                        const newSections = [...collection[sectionType]]
-                        newSections[index].images[imageIndex] = { ...image, alt: e.target.value }
-                        setCollection({ ...collection, [sectionType]: newSections })
-                      }}
-                      placeholder="Image Alt Text"
-                    />
-                  </div>
-                ))}
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
             </div>
-          ))}
-        </div>
-      ))}
-
-      <Button onClick={handleSave}>Save Changes</Button>
-    </div>
+          </div>
+        </CardContent>
+      </Card>
+      <div className="flex justify-center">
+        <Button type="submit">Сохранить изменения</Button>
+      </div>
+    </form>
   )
 }
 

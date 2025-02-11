@@ -60,6 +60,13 @@ export function Sidebar() {
         { title: "Секции", href: "/admin/about/sections" },
       ],
     },
+    {
+      title: "Детальные страницы",
+      items: [
+        { title: "Все страницы", href: "/admin/collection-detail" },
+        { title: "Добавить страницу", href: "/admin/collection-detail/add" },
+      ],
+    },
   ]
 
   return (
