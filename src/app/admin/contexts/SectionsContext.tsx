@@ -406,10 +406,9 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           { src: "", alt: "Смеситель для ванной 3" },
         ],
       },
-      // Добавьте другие секции по необходимости
     ],
     collections: [
-      // Добавляем новые данные для коллекций
+
       {
         title: "Коллекция для ванной",
         description: "Элегантность и функциональность в каждой детали",
@@ -420,7 +419,6 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           { src: "/img/item01.png", alt: "Коллекция для ванной 3" },
         ],
       },
-      // Добавьте дополнительные коллекции по необходимости
     ],
   });
 
