@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useSections } from "../../contexts/SectionsContext"
 import Image from "next/image"
+// import { useSections } from "../contexts/SectionsContext"
 
 export default function Section1Admin() {
   const { sections, updateSection } = useSections()
@@ -91,16 +92,12 @@ export default function Section1Admin() {
         </div>
         <div>
           <Label>Изображения блока</Label>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             {sectionData.images_block?.map((image, index) => (
               <div key={index} className="space-y-2">
                 <Image
-                  width={300}
-                  height={300}
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  className="w-full h-40 object-contain"
-                />
+              width={300}
+              height={300} src={image.src || "/placeholder.svg"} alt={image.alt} className="w-full h-40 object-contain" />
                 <Input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, index)} />
               </div>
             ))}
@@ -124,3 +121,4 @@ export default function Section1Admin() {
     </div>
   )
 }
+

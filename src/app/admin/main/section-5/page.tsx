@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useSections } from "../../contexts/SectionsContext"
 import Image from "next/image"
+// import { useSections } from "../contexts/SectionsContext"
 
 export default function Section5Admin() {
   const { sections, updateSection } = useSections()
@@ -22,33 +23,29 @@ export default function Section5Admin() {
     console.log("Изменения сохранены:", sectionData)
   }
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, index: number, isMain = false) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setSectionData((prev) => {
-          const newImagesBlock = [...(prev.images_block || [])]
-          newImagesBlock[index] = {
-            ...newImagesBlock[index],
-            src: reader.result as string,
-          }
-          return { ...prev, images_block: newImagesBlock }
-        })
+        if (isMain) {
+          setSectionData((prev) => ({
+            ...prev,
+            images: [reader.result as string],
+          }))
+        } else {
+          setSectionData((prev) => {
+            const newImagesBlock = [...(prev.images_block || [])]
+            newImagesBlock[index] = {
+              ...newImagesBlock[index],
+              src: reader.result as string,
+            }
+            return { ...prev, images_block: newImagesBlock }
+          })
+        }
       }
       reader.readAsDataURL(file)
     }
-  }
-
-  const handleImageDataChange = (index: number, field: "alt" | "desc", value: string) => {
-    setSectionData((prev) => {
-      const newImagesBlock = [...(prev.images_block || [])]
-      newImagesBlock[index] = {
-        ...newImagesBlock[index],
-        [field]: value,
-      }
-      return { ...prev, images_block: newImagesBlock }
-    })
   }
 
   return (
@@ -95,33 +92,33 @@ export default function Section5Admin() {
         </div>
         <div>
           <Label>Изображения блока</Label>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             {sectionData.images_block?.map((image, index) => (
-              <div key={index} className="space-y-2 border p-4 rounded">
+              <div key={index} className="space-y-2">
                 <Image
-                  width={300}
-                  height={300}
-                  src={image.src || "/placeholder.svg"}
-                  alt={image.alt}
-                  className="w-full h-40 object-contain"
-                />
+              width={300}
+              height={300} src={image.src || "/placeholder.svg"} alt={image.alt} className="w-full h-40 object-contain" />
                 <Input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, index)} />
-                <Input
-                  placeholder="Alt текст"
-                  value={image.alt || ""}
-                  onChange={(e) => handleImageDataChange(index, "alt", e.target.value)}
-                />
-                <Input
-                  placeholder="Описание"
-                  value={image.desc || ""}
-                  onChange={(e) => handleImageDataChange(index, "desc", e.target.value)}
-                />
               </div>
             ))}
           </div>
         </div>
+        {/* <div>
+          <Label>Главное изображение</Label>
+          <div className="space-y-2">
+            <Image
+              width={300}
+              height={300}
+              src={sectionData.images?.[0] || "/placeholder.svg"}
+              alt="Main Preview"
+              className="w-full h-40 object-contain"
+            />
+            <Input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 0, true)} />
+          </div>
+        </div> */}
       </div>
       <Button onClick={handleSave}>Сохранить изменения</Button>
     </div>
   )
 }
+

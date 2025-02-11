@@ -75,25 +75,15 @@ export default function Main() {
 
   const { sections } = useSections()
 
-  console.log('🎯 Секции в Main:', sections)
-
-  if (!sections || Object.keys(sections).length === 0) {
-    console.log('⏳ Данные еще не загружены')
-    return <div>Загрузка...</div>
-  }
-
   const imagesForCollections = useMemo(() => {
-    if (!sections["section-4"] || !sections["section-4"].images_block) {
-      console.log('⚠️ Нет данных для section-4')
-      return []
-    }
-
-    return sections["section-4"].images_block.map((item) => ({
-      src: item.src,
-      alt: item.alt || "",
-      desc: item.desc || "",
-      url: item.url || "",
-    })) || []
+    return (
+      sections["section-4"].images_block?.map((item) => ({
+        src: item.src,
+        alt: item.alt || "",
+        desc: item.desc || "",
+        url: item.url || "",
+      })) || []
+    )
   }, [sections])
 
   // const imagesForCollections = useMemo(() => {

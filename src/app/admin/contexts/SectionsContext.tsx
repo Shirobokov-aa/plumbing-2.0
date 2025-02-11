@@ -1,8 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useState, useContext, useEffect } from "react";
-import { Alert } from "@/components/ui/alert"
+import { createContext, useState, useContext } from "react";
 
 export interface ImageBlockData {
   src: string;
@@ -22,8 +21,6 @@ interface Section {
 interface SectionsMainPage {
   [key: string]: Section;
 }
-
-
 
 interface BathroomSection {
   title: string;
@@ -96,10 +93,10 @@ interface KitchenCollection {
 }
 
 export interface CollectionItem {
-  id: number;
+  id: number; // Убедимся, что id имеет тип number
+  image: string;
   title: string;
   desc: string;
-  image: string;
   link: string;
   flexDirection: "xl:flex-row" | "xl:flex-row-reverse";
 }
@@ -161,69 +158,74 @@ const SectionsContext = createContext<SectionsContextType | undefined>(undefined
 export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [sections, setSections] = useState<SectionsMainPage>({
     "section-1": {
-      title: "",
-      description: "",
-      link: { name: "", url: "" },
-      images_block: [],
-      images: [],
+      title: "Привет мир 123567",
+      description: "Какое то описание из объекта",
+      link: { name: "Посмотреть", url: "/123123" },
+      images_block: [
+        { src: "/img/item01.png", alt: "Image 1", desc: "ERA" },
+        { src: "/img/item02.png", alt: "Image 2", desc: "AMO" },
+      ],
+      images: ["/img/banner-little.png"],
     },
     "section-2": {
-      images: [],
-      link: { name: "", url: "" },
+      images: ["/img/banner01.png"],
+      link: { name: "Какая-то навигация", url: "/" },
     },
     "section-3": {
-      title: "",
-      description: "",
-      link: { name: "", url: "" },
-      images: [],
+      title: "ERA",
+      description: "Коллекция ERA воплощает гармонию современного дизайна и классических традиций...",
+      link: { name: "Посмотреть", url: "/" },
+      images: ["/img/item-era.png"],
     },
     "section-4": {
-      title: "",
-      description: "",
-      link: { name: "", url: "" },
-      images_block: [],
+      title: "Коллекции",
+      description: "Описание для коллекций",
+      link: { name: "Смотреть", url: "/" },
+      images_block: [
+        { src: "/img/item01.png", alt: "Banner 1", desc: "ERA" },
+        { src: "/img/item02.png", alt: "Banner 2", desc: "AMO" },
+        { src: "/img/item03.png", alt: "Image 3", desc: "TWIST" },
+        { src: "/img/item01.png", alt: "Image 1", desc: "ERA" },
+      ],
     },
     "section-5": {
-      title: "",
-      description: "",
-      link: { name: "", url: "" },
-      images_block: [],
+      title: "Какой-то заголовок",
+      description: "Описание для этого блока",
+      link: { name: "Посмотреть", url: "/" },
+      images_block: [
+        { src: "/img/item10.png", alt: "Item 10", desc: "Description 1" },
+        { src: "/img/item11.png", alt: "Item 11", desc: "Description 2" },
+        { src: "/img/item12.png", alt: "Item 12", desc: "Description 3" },
+      ],
     },
   });
 
-  const [collections, setCollections] = useState<CollectionItem[]>([]);
-
-  useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        console.log('Начинаем загрузку коллекций...')
-        const response = await fetch('/api/collections');
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error('Ответ сервера:', errorData);
-          throw new Error(`Ошибка загрузки данных: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log("Данные коллекций:", data);
-        
-        if (Array.isArray(data)) {
-          setCollections(data);
-        } else if (data && Array.isArray(data.data)) {
-          setCollections(data.data);
-        } else {
-          console.error("Неожиданный формат данных:", data);
-          setCollections([]);
-        }
-      } catch (error) {
-        console.error('Ошибка при загрузке коллекций:', error);
-        // Здесь вы можете добавить обработку ошибки, например, установить состояние ошибки
-        // setError(error instanceof Error ? error.message : 'Произошла неизвестная ошибка');
-      }
-    };
-  
-    fetchCollections()
-  }, [])
+  const [collections, setCollections] = useState<CollectionItem[]>([
+    {
+      id: 1,
+      image: "/img/item-era.png",
+      title: "ERA",
+      desc: "Коллекция ERA воплощает гармонию современного дизайна и классических традиций...",
+      link: "/",
+      flexDirection: "xl:flex-row",
+    },
+    {
+      id: 2,
+      image: "/img/item01.png",
+      title: "AMO",
+      desc: "Описание для коллекции AMO",
+      link: "/",
+      flexDirection: "xl:flex-row-reverse",
+    },
+    {
+      id: 3,
+      image: "/img/item02.png",
+      title: "TWIST",
+      desc: "Описание для коллекции TWIST",
+      link: "/",
+      flexDirection: "xl:flex-row",
+    },
+  ]);
 
   const [collectionDetails, setCollectionDetails] = useState<CollectionDetail[]>([
     {
@@ -486,90 +488,15 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     ],
   });
 
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        console.log('🔄 Начинаем загрузку данных...')
-        const response = await fetch('/api/sections')
-        const data = await response.json()
+  const updateSection = (sectionKey: string, newData: Section) => {
+    setSections((prevSections) => ({
+      ...prevSections,
+      [sectionKey]: newData,
+    }));
+  };
 
-        if (data && data.length > 0 && data[0].data) {
-          console.log('📦 Загруженные данные:', data[0].data)
-          setSections(data[0].data)
-        }
-      } catch (error) {
-        console.error('❌ Ошибка загрузки секций:', error)
-      }
-    }
-
-    fetchSections()
-  }, [])
-
-  const [alert, setAlert] = useState<{ message: string; type: "success" | "error" } | null>(null)
-
-  const updateSection = async (sectionKey: string, newData: Section) => {
-    try {
-      // Обновляем в БД
-      const response = await fetch('/api/sections', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          key: 'main',
-          data: { ...sections, [sectionKey]: newData }
-        })
-      })
-
-      if (!response.ok) throw new Error('Ошибка обновления')
-
-      // Обновляем локальное состояние
-      setSections(prev => ({
-        ...prev,
-        [sectionKey]: newData
-      }))
-
-      setAlert({
-        message: 'Изменения успешно сохранены',
-        type: 'success'
-      })
-    } catch (error: unknown) {
-      console.error('Ошибка при обновлении:', error)
-      setAlert({
-        message: 'Ошибка при сохранении изменений',
-        type: 'error'
-      })
-    }
-  }
-
-  const updateCollections = async (newCollections: CollectionItem[]) => {
-    try {
-      const response = await fetch('/api/collections', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: newCollections })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Ответ сервера:", errorText);
-        throw new Error(`Ошибка обновления: ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log("Результат обновления:", result);
-
-      // Обновляем состояние коллекций
-      setCollections(result.data); // Используем данные из ответа API
-      setAlert({
-        message: 'Коллекции успешно обновлены',
-        type: 'success'
-      });
-    } catch (error) {
-      console.error('Ошибка при обновлении коллекций:', error);
-      setAlert({
-        message: `Ошибка при обновлении коллекций: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`,
-        type: 'error'
-      });
-    }
+  const updateCollections = (newCollections: CollectionItem[]) => {
+    setCollections(newCollections);
   };
 
   const updateCollectionDetail = (id: number, newData: CollectionDetail) => {
@@ -605,11 +532,9 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         updateAboutPage, // Добавляем новую функцию обновления
       }}
     >
-      {alert && <Alert message={alert.message} type={alert.type} />}
       {children}
     </SectionsContext.Provider>
   );
-
 };
 
 export const useSections = () => {
