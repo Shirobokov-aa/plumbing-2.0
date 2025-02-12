@@ -1,7 +1,7 @@
 "use client"
 
 import { useFieldArray, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+// import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -73,18 +73,42 @@ export type FormData = z.infer<typeof insertCollectionDetailSchema> & {
   }>;
 };
 
+// type SectionType = {
+//   title: string;
+//   description: string;
+//   linkText?: string;
+//   linkUrl?: string;
+//   titleDesc?: string;
+//   descriptionDesc?: string;
+//   order: number;
+//   images: Array<{ src: string; alt: string; order: number }>;
+// };
+
+const defaultSection = {
+  title: "",
+  description: "",
+  linkText: "",
+  linkUrl: "",
+  titleDesc: "",
+  descriptionDesc: "",
+  order: 0,
+  images: []
+};
+
 export function CollectionDetailForm({ initialData, action }: CollectionDetailFormProps) {
   const router = useRouter()
   const form = useForm<FormData>({
     defaultValues: {
-      name: initialData?.name || "",
-      bannerImage: initialData?.bannerImage || "",
-      bannerTitle: initialData?.bannerTitle || "",
-      bannerDescription: initialData?.bannerDescription || "",
-      sections1: initialData?.sections1 || [],
-      sections2: initialData?.sections2 || [],
-      sections3: initialData?.sections3 || [],
-      sections4: initialData?.sections4 || []
+      name: initialData?.name ?? "",
+      bannerImage: initialData?.bannerImage ?? "",
+      bannerTitle: initialData?.bannerTitle ?? "",
+      bannerDescription: initialData?.bannerDescription ?? "",
+      bannerLinkText: initialData?.bannerLinkText ?? "",
+      bannerLinkUrl: initialData?.bannerLinkUrl ?? "",
+      sections1: initialData?.sections1?.length ? initialData.sections1 : [{ ...defaultSection }],
+      sections2: initialData?.sections2?.length ? initialData.sections2 : [{ ...defaultSection }],
+      sections3: initialData?.sections3?.length ? initialData.sections3 : [{ ...defaultSection }],
+      sections4: initialData?.sections4?.length ? initialData.sections4 : [{ ...defaultSection }]
     }
   })
 

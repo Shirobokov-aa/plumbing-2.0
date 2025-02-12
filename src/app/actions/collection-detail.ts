@@ -13,13 +13,63 @@ import {
   getCollectionDetailWithSections
 } from "@/db/collection-details"
 import type {
-  NewCollectionDetail,
+  // NewCollectionDetail,
   NewSection1,
   NewSection2,
   NewSection3,
   NewSection4,
-  NewSectionImage
+  // NewSectionImage
 } from "@/db/schema"
+import { eq } from "drizzle-orm"
+import { db } from "@/db"
+import {
+  collectionSections1,
+  collectionSections2,
+  collectionSections3,
+  collectionSections4,
+  collectionSectionImages
+} from "@/db/schema"
+
+type CollectionDetailInput = {
+  name: string;
+  bannerImage: string;
+  bannerTitle: string;
+  bannerDescription: string;
+  bannerLinkText: string;
+  bannerLinkUrl: string;
+  sections1: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections2: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    titleDesc: string;
+    descriptionDesc: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections3: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections4: Array<{
+    title: string;
+    description: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+}
 
 // Получить детальную информацию о коллекции
 export async function getCollectionDetailById(id: number) {
@@ -96,9 +146,39 @@ export async function getCollectionDetailById(id: number) {
 }
 
 // Создать новую детальную страницу
-export async function createCollectionDetail(data: NewCollectionDetail) {
+export async function createCollectionDetail(data: CollectionDetailInput) {
   try {
+    // Создаем основную запись
     const detail = await createDetail(data)
+
+    // Создаем секции с изображениями
+    await Promise.all([
+      ...data.sections1.map(section =>
+        createSectionWithImages('section1', {
+          ...section,
+          collectionDetailId: detail.id
+        }, section.images)
+      ),
+      ...data.sections2.map(section =>
+        createSectionWithImages('section2', {
+          ...section,
+          collectionDetailId: detail.id
+        }, section.images)
+      ),
+      ...data.sections3.map(section =>
+        createSectionWithImages('section3', {
+          ...section,
+          collectionDetailId: detail.id
+        }, section.images)
+      ),
+      ...data.sections4.map(section =>
+        createSectionWithImages('section4', {
+          ...section,
+          collectionDetailId: detail.id
+        }, section.images)
+      )
+    ])
+
     return { success: true, id: detail.id }
   } catch (error) {
     console.error('Error creating collection detail:', error)
@@ -107,9 +187,68 @@ export async function createCollectionDetail(data: NewCollectionDetail) {
 }
 
 // Обновить детальную страницу
-export async function updateCollectionDetail(id: number, data: Partial<NewCollectionDetail>) {
+export async function updateCollectionDetail(id: number, data: Partial<CollectionDetailInput>) {
   try {
-    await updateDetail(id, data)
+    // Обновляем основную запись
+    await updateDetail(id, {
+      name: data.name,
+      bannerImage: data.bannerImage,
+      bannerTitle: data.bannerTitle,
+      bannerDescription: data.bannerDescription,
+      bannerLinkText: data.bannerLinkText,
+      bannerLinkUrl: data.bannerLinkUrl,
+    })
+
+    // Удаляем существующие изображения и секции
+    await db.delete(collectionSectionImages)
+      .where(eq(collectionSectionImages.sectionId, id))
+
+    await db.delete(collectionSections1)
+      .where(eq(collectionSections1.collectionDetailId, id))
+    await db.delete(collectionSections2)
+      .where(eq(collectionSections2.collectionDetailId, id))
+    await db.delete(collectionSections3)
+      .where(eq(collectionSections3.collectionDetailId, id))
+    await db.delete(collectionSections4)
+      .where(eq(collectionSections4.collectionDetailId, id))
+
+    // Создаем новые секции
+    if (data.sections1) {
+      await Promise.all(data.sections1.map(section =>
+        createSectionWithImages('section1', {
+          ...section,
+          collectionDetailId: id
+        }, section.images)
+      ))
+    }
+
+    if (data.sections2) {
+      await Promise.all(data.sections2.map(section =>
+        createSectionWithImages('section2', {
+          ...section,
+          collectionDetailId: id
+        }, section.images)
+      ))
+    }
+
+    if (data.sections3) {
+      await Promise.all(data.sections3.map(section =>
+        createSectionWithImages('section3', {
+          ...section,
+          collectionDetailId: id
+        }, section.images)
+      ))
+    }
+
+    if (data.sections4) {
+      await Promise.all(data.sections4.map(section =>
+        createSectionWithImages('section4', {
+          ...section,
+          collectionDetailId: id
+        }, section.images)
+      ))
+    }
+
     return { success: true }
   } catch (error) {
     console.error('Error updating collection detail:', error)
@@ -129,10 +268,10 @@ export async function deleteCollectionDetail(id: number) {
 }
 
 // Создать секцию с изображениями
-export async function createSectionWithImages(
+async function createSectionWithImages(
   type: 'section1' | 'section2' | 'section3' | 'section4',
   sectionData: NewSection1 | NewSection2 | NewSection3 | NewSection4,
-  images: NewSectionImage[]
+  images: Array<{ src: string; alt: string; order: number }>
 ) {
   try {
     let section
@@ -151,16 +290,16 @@ export async function createSectionWithImages(
         break
     }
 
-    // Создаем изображения для секции
-    await Promise.all(
-      images.map(img => createSectionImage({
-        ...img,
-        sectionId: section.id,
-        sectionType: type
-      }))
-    )
+    // Добавляем sectionId и sectionType к каждому изображению
+    const imagesWithSection = images.map(img => ({
+      ...img,
+      sectionId: section.id,
+      sectionType: type
+    }))
 
-    return { success: true, sectionId: section.id }
+    await Promise.all(imagesWithSection.map(createSectionImage))
+
+    return section
   } catch (error) {
     console.error('Error creating section with images:', error)
     throw error

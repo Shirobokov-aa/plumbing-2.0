@@ -70,7 +70,9 @@ export function CollectionContent({ id }: CollectionContentProps) {
     async function loadCollection() {
       try {
         const data = await getCollectionDetailById(id);
-        setCollection(data);
+        if (data) {
+          setCollection(data);
+        }
       } catch (error) {
         console.error("Error loading collection:", error);
       } finally {
@@ -112,18 +114,38 @@ export function CollectionContent({ id }: CollectionContentProps) {
         </div>
       </section>
       <CollectionDetailBanner {...collection.banner} name={collection.name} />
-      {collection.sections.map((section: any, index: number) => (
-        <CollectionDetailSection key={index} {...section} reverse={index % 2 !== 0} />
+      {collection.sections?.map((section, index) => (
+        <CollectionDetailSection
+          key={index}
+          {...section}
+          linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
+        />
       ))}
       {/* здесь будет другая секция (отдельным компонентом) с другими стилями */}
-      {collection.sections2.map((section: any, index: number) => (
-        <CollectionDetailSection2 key={index} {...section} reverse={index % 2 !== 0} />
+      {collection.sections2?.map((section, index) => (
+        <CollectionDetailSection2
+          key={index}
+          {...section}
+          linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
+        />
       ))}
-      {collection.sections3.map((section: any, index: number) => (
-        <CollectionDetailSection3 key={index} {...section} reverse={index % 2 !== 0} />
+      {collection.sections3?.map((section, index) => (
+        <CollectionDetailSection3
+          key={index}
+          {...section}
+          linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
+        />
       ))}
-      {collection.sections4.map((section: any, index: number) => (
-        <CollectionDetailSection4 key={index} {...section} reverse={index % 2 !== 0} />
+      {collection.sections4?.map((section, index) => (
+        <CollectionDetailSection4
+          key={index}
+          {...section}
+          linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
+        />
       ))}
     </>
   );

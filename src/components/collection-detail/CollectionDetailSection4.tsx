@@ -1,12 +1,11 @@
 // import Link from "next/link";
 import Image from "next/image";
-import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
+// import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
 
 interface SectionProps {
   title: string;
   description: string;
-  // link: { text: string; url: string };
-  images: ImageBlockData[];
+  images: Array<{ src: string; alt: string; order: number }>;
   reverse?: boolean;
 }
 
