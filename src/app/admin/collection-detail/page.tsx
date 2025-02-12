@@ -1,8 +1,8 @@
 import { getAllCollectionDetails } from "@/db/collection-details"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-// import { DataTable } from "./data-table"
-// import { columns } from "./columns"
+import { DataTable } from "./data-table"
+import { columns } from "./columns"
 
 export default async function CollectionDetailPage() {
   const details = await getAllCollectionDetails()
@@ -15,7 +15,7 @@ export default async function CollectionDetailPage() {
           <Button>Добавить страницу</Button>
         </Link>
       </div>
-      {/* <DataTable columns={columns} data={details} /> */}
+      <DataTable columns={columns} data={details} />
     </div>
   )
 }

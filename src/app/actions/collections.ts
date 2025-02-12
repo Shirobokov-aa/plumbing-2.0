@@ -11,7 +11,7 @@ import {
   getCollectionPreviewById
 } from '@/db/collections'
 import type { CollectionItem } from '../admin/contexts/SectionsContext'
-import { insertCollectionSchema, insertPreviewSchema, collectionPreviews } from '@/db/schema'
+import { insertCollectionSchema, insertPreviewSchema, collectionPreviews, collectionDetails } from '@/db/schema'
 import type { NewCollectionPreview } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -163,6 +163,7 @@ type PreviewResponse =
 
 export async function addCollectionPreview(data: FormData): Promise<PreviewResponse> {
   try {
+    // 1. Создаем превью
     const preview = {
       title: data.get('title') as string,
       desc: data.get('desc') as string,
@@ -177,12 +178,25 @@ export async function addCollectionPreview(data: FormData): Promise<PreviewRespo
       throw new Error('Failed to get preview ID')
     }
 
-    // Обновляем ссылку с полученным id
+    // 2. Создаем детальную страницу с тем же ID
+    await db.insert(collectionDetails).values({
+      id: result.id, // Используем тот же ID
+      name: preview.title.toLowerCase(),
+      bannerImage: preview.image,
+      bannerTitle: preview.title,
+      bannerDescription: preview.desc,
+      bannerLinkText: "Подробнее",
+      bannerLinkUrl: `/collections/collection-detail/${result.id}`
+    })
+
+    // 3. Обновляем ссылку превью
     await updateCollectionPreview(result.id, {
       link: `/collections/collection-detail/${result.id}`
     })
 
     revalidatePath('/collections')
+    revalidatePath('/admin/collection-detail')
+
     return { success: true, id: result.id }
   } catch (error) {
     return {
@@ -205,6 +219,28 @@ export async function deleteCollectionPreview(id: number) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Ошибка при удалении коллекции'
+    }
+  }
+}
+
+// Добавьте новую функцию
+export async function updateAllCollectionLinks() {
+  try {
+    const previews = await getAllCollectionPreviews()
+
+    for (const preview of previews) {
+      await updateCollectionPreview(preview.id, {
+        link: `/collections/collection-detail/${preview.id}` // используем ID
+      })
+    }
+
+    revalidatePath('/collections')
+    return { success: true }
+  } catch (error) {
+    console.error('Error updating collection links:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Ошибка при обновлении ссылок'
     }
   }
 }

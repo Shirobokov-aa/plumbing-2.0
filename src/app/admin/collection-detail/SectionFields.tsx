@@ -7,16 +7,54 @@ import { ImageUpload } from "./ImageUpload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
+import { Control } from "react-hook-form"
 
-interface SectionFieldsProps {
+interface FormData {
+  sections1: Array<{
+    title: string;
+    description: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections2: Array<{
+    title: string;
+    description: string;
+    titleDesc?: string;
+    descriptionDesc?: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections3: Array<{
+    title: string;
+    description: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections4: Array<{
+    title: string;
+    description: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+}
+
+type SectionFieldsProps = {
   type: "section1" | "section2" | "section3" | "section4"
   index: number
-  control: any
+  control: Control<FormData>
   remove: () => void
 }
 
 export function SectionFields({ type, index, control, remove }: SectionFieldsProps) {
-  const basePath = `${type}s.${index}`
+  const fieldName = type === "section1" ? "sections1" :
+                   type === "section2" ? "sections2" :
+                   type === "section3" ? "sections3" : "sections4"
 
   return (
     <Card className="relative mb-4">
@@ -30,12 +68,17 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
         <X className="h-4 w-4" />
       </Button>
       <CardHeader>
-        <CardTitle>Секция {type.replace("section", "")} - {index + 1}</CardTitle>
+        <CardTitle className="flex justify-between">
+          <span>Секция {index + 1}</span>
+          <Button variant="destructive" size="sm" onClick={remove}>
+            Удалить
+          </Button>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <FormField
           control={control}
-          name={`${basePath}.title`}
+          name={`${fieldName}.${index}.title`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Заголовок</FormLabel>
@@ -47,7 +90,7 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
         />
         <FormField
           control={control}
-          name={`${basePath}.description`}
+          name={`${fieldName}.${index}.description`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Описание</FormLabel>
@@ -58,12 +101,11 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
           )}
         />
 
-        {/* Дополнительные поля для section2 */}
         {type === "section2" && (
           <>
             <FormField
               control={control}
-              name={`${basePath}.titleDesc`}
+              name={`${fieldName}.${index}.titleDesc` as `sections2.${number}.titleDesc`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Дополнительный заголовок</FormLabel>
@@ -75,7 +117,7 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
             />
             <FormField
               control={control}
-              name={`${basePath}.descriptionDesc`}
+              name={`${fieldName}.${index}.descriptionDesc` as `sections2.${number}.descriptionDesc`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Дополнительное описание</FormLabel>
@@ -88,12 +130,11 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
           </>
         )}
 
-        {/* Поля для ссылок (кроме section4) */}
         {type !== "section4" && (
           <>
             <FormField
               control={control}
-              name={`${basePath}.linkText`}
+              name={`${fieldName}.${index}.linkText` as `sections1.${number}.linkText`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Текст ссылки</FormLabel>
@@ -105,7 +146,7 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
             />
             <FormField
               control={control}
-              name={`${basePath}.linkUrl`}
+              name={`${fieldName}.${index}.linkUrl` as `sections1.${number}.linkUrl`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>URL ссылки</FormLabel>
@@ -120,19 +161,19 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
 
         <FormField
           control={control}
-          name={`${basePath}.order`}
+          name={`${fieldName}.${index}.order` as `${typeof fieldName}.${number}.order`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Порядок</FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
               </FormControl>
             </FormItem>
           )}
         />
 
         <ImageUpload
-          name={`${basePath}.images`}
+          name={`${fieldName}.${index}.images` as `${typeof fieldName}.${number}.images`}
           control={control}
           label="Изображения секции"
         />

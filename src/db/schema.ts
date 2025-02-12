@@ -90,9 +90,7 @@ export type NewCollectionPreview = InferInsertModel<typeof collectionPreviews>
 // Основная таблица детальной страницы коллекции
 export const collectionDetails = pgTable('collection_details', {
   id: serial('id').primaryKey(),
-  collectionId: integer('collection_id').references(() => collectionPreviews.id),
   name: text('name').notNull(),
-  // Баннер
   bannerImage: text('banner_image').notNull(),
   bannerTitle: text('banner_title').notNull(),
   bannerDescription: text('banner_description').notNull(),
@@ -158,7 +156,40 @@ export const collectionSectionImages = pgTable('collection_section_images', {
 
 // Типы для детальной страницы коллекции
 export type CollectionDetail = InferSelectModel<typeof collectionDetails>
-export type NewCollectionDetail = InferInsertModel<typeof collectionDetails>
+export type NewCollectionDetail = InferInsertModel<typeof collectionDetails> & {
+  sections1: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections2: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    titleDesc: string;
+    descriptionDesc: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections3: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections4: Array<{
+    title: string;
+    description: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+};
 
 // Типы для секций
 export type Section1 = InferSelectModel<typeof collectionSections1>

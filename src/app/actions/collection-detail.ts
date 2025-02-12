@@ -9,7 +9,8 @@ import {
   createSection2,
   createSection3,
   createSection4,
-  createSectionImage
+  createSectionImage,
+  getCollectionDetailWithSections
 } from "@/db/collection-details"
 import type {
   NewCollectionDetail,
@@ -26,19 +27,67 @@ export async function getCollectionDetailById(id: number) {
     const detail = await getDetail(id)
     if (!detail) return null
 
+    // Получаем все связанные данные
+    const fullDetail = await getCollectionDetailWithSections(id)
+    if (!fullDetail) return null
+
     // Преобразуем данные в нужный формат для фронтенда
     return {
-      id: detail.id,
-      name: detail.name,
+      id: fullDetail.id,
+      name: fullDetail.name,
       banner: {
-        image: detail.bannerImage,
-        title: detail.bannerTitle,
-        description: detail.bannerDescription,
+        image: fullDetail.bannerImage,
+        title: fullDetail.bannerTitle,
+        description: fullDetail.bannerDescription,
         link: {
-          text: detail.bannerLinkText,
-          url: detail.bannerLinkUrl
+          text: fullDetail.bannerLinkText,
+          url: fullDetail.bannerLinkUrl
         }
-      }
+      },
+      sections: fullDetail.sections1.map(s => ({
+        title: s.title,
+        description: s.description,
+        linkText: s.linkText,
+        linkUrl: s.linkUrl,
+        images: s.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      })),
+      sections2: fullDetail.sections2.map(s => ({
+        title: s.title,
+        description: s.description,
+        linkText: s.linkText,
+        linkUrl: s.linkUrl,
+        titleDesc: s.titleDesc,
+        descriptionDesc: s.descriptionDesc,
+        images: s.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      })),
+      sections3: fullDetail.sections3.map(s => ({
+        title: s.title,
+        description: s.description,
+        linkText: s.linkText,
+        linkUrl: s.linkUrl,
+        images: s.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      })),
+      sections4: fullDetail.sections4.map(s => ({
+        title: s.title,
+        description: s.description,
+        images: s.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      }))
     }
   } catch (error) {
     console.error('Error fetching collection detail:', error)

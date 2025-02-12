@@ -9,14 +9,14 @@ import { X } from "lucide-react"
 import type { FormData } from "./CollectionDetailForm"
 
 interface ImageUploadProps {
-  name: string
+  name: `sections${number}.${number}.images`
   control: Control<FormData>
 }
 
 export function ImageUpload({ name, control }: ImageUploadProps) {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: name as `sections${number}.${number}.images`,
+    name,
   })
 
   return (

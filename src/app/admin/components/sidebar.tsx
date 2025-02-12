@@ -27,11 +27,18 @@ export function Sidebar() {
       items: [
         { title: "Все коллекции", href: "/admin/collections" },
         { title: "Добавить коллекцию", href: "/admin/collections/add" },
-        // Только для коллекций, которые есть в collectionDetails
+        { title: "Обновить ссылки", href: "/admin/collections/update-links" },
         ...collectionDetails.map((collection) => ({
           title: `Редактировать ${collection.name.toUpperCase()}`,
           href: `/admin/collections/edit/${collection.id}`,
         })),
+      ],
+    },
+    {
+      title: "Детальные страницы",
+      items: [
+        { title: "Все страницы", href: "/admin/collection-detail" },
+        { title: "Добавить страницу", href: "/admin/collection-detail/add" },
       ],
     },
     {
@@ -60,13 +67,7 @@ export function Sidebar() {
         { title: "Секции", href: "/admin/about/sections" },
       ],
     },
-    {
-      title: "Детальные страницы",
-      items: [
-        { title: "Все страницы", href: "/admin/collection-detail" },
-        { title: "Добавить страницу", href: "/admin/collection-detail/add" },
-      ],
-    },
+
   ]
 
   return (
