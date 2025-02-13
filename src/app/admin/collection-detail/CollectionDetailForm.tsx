@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SectionFields } from "./SectionFields"
 import type { z } from "zod"
+// import Image from "next/image"
+import { ImageUpload } from "@/components/ui/image-upload"
 
 interface CollectionDetailFormProps {
   initialData?: {
@@ -160,7 +162,6 @@ export function CollectionDetailForm({ initialData, action }: CollectionDetailFo
                 </FormItem>
               )}
             />
-            {/* Поля баннера */}
             <FormField
               control={form.control}
               name="bannerImage"
@@ -168,12 +169,40 @@ export function CollectionDetailForm({ initialData, action }: CollectionDetailFo
                 <FormItem>
                   <FormLabel>Изображение баннера</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full"
+                      height={400}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
-            {/* Остальные поля баннера */}
+            <FormField
+              control={form.control}
+              name="bannerTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Заголовок баннера</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Введите заголовок баннера" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bannerDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Описание баннера</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Введите описание баннера" />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 

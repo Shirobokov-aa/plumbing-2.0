@@ -2,14 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { signOut } from "next-auth/react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useSections } from "../contexts/SectionsContext"
+import { LogOut } from "lucide-react"
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { collectionDetails } = useSections()
 
   const sidebarItems = [
     {
@@ -28,10 +28,6 @@ export function Sidebar() {
         { title: "Все коллекции", href: "/admin/collections" },
         { title: "Добавить коллекцию", href: "/admin/collections/add" },
         { title: "Обновить ссылки", href: "/admin/collections/update-links" },
-        ...collectionDetails.map((collection) => ({
-          title: `Редактировать ${collection.name.toUpperCase()}`,
-          href: `/admin/collections/edit/${collection.id}`,
-        })),
       ],
     },
     {
@@ -42,18 +38,16 @@ export function Sidebar() {
       ],
     },
     {
-      title: "Ванная", // Новый раздел
+      title: "Ванная",
       items: [
-        // { title: "Общие настройки", href: "/admin/bathroom" },
         { title: "Баннер", href: "/admin/bathroom/banner" },
         { title: "Секции", href: "/admin/bathroom/sections" },
         { title: "Коллекции", href: "/admin/bathroom/collections" },
       ],
     },
     {
-      title: "Кухня", // Новый раздел
+      title: "Кухня",
       items: [
-        // { title: "Общие настройки", href: "/admin/bathroom" },
         { title: "Баннер", href: "/admin/kitchen/banner" },
         { title: "Секции", href: "/admin/kitchen/sections" },
         { title: "Коллекции", href: "/admin/kitchen/collections" },
@@ -67,15 +61,22 @@ export function Sidebar() {
         { title: "Секции", href: "/admin/about/sections" },
       ],
     },
-
   ]
 
   return (
-    <div className="w-64 bg-gray-100 border-r">
-      <div className="p-4">
+    <div className="w-64 bg-gray-100 border-r flex flex-col">
+      <div className="p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Админ-панель</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => signOut({ callbackUrl: "/admin/signin" })}
+          title="Выйти"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
-      <ScrollArea className="h-[calc(100vh-5rem)]">
+      <ScrollArea className="flex-1">
         <div className="p-4">
           <Accordion type="multiple" className="w-full">
             {sidebarItems.map((section, index) => (
@@ -84,7 +85,10 @@ export function Sidebar() {
                 <AccordionContent>
                   {section.items.map((item, itemIndex) => (
                     <Link href={item.href} key={itemIndex}>
-                      <Button variant={pathname === item.href ? "secondary" : "ghost"} className="w-full justify-start">
+                      <Button
+                        variant={pathname === item.href ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                      >
                         {item.title}
                       </Button>
                     </Link>

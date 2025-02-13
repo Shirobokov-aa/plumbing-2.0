@@ -11,10 +11,11 @@ import {
   getCollectionPreviewById
 } from '@/db/collections'
 import type { CollectionItem } from '../admin/contexts/SectionsContext'
-import { insertCollectionSchema, insertPreviewSchema, collectionPreviews, collectionDetails } from '@/db/schema'
+import { insertCollectionSchema, insertPreviewSchema, collectionPreviews, collectionDetails, collectionSections1, collectionSections2, collectionSections3, collectionSections4 } from '@/db/schema'
 import type { NewCollectionPreview } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
+import { getAllCollectionDetails } from "@/db/collection-details"
 
 // interface Banner {
 //   image: string;
@@ -24,13 +25,24 @@ import { db } from '@/db'
 // }
 
 // Получение всех коллекций для превью
+export async function getCollectionPreviews() {
+  try {
+    const previews = await getAllCollectionPreviews()
+    return { collections: previews }
+  } catch (error) {
+    console.error('Error fetching collection previews:', error)
+    return { error: 'Ошибка при получении коллекций' }
+  }
+}
+
+// Получение всех коллекций для детальных страниц
 export async function getCollections() {
   try {
-    const collections = await getAllCollectionPreviews()
+    const collections = await getAllCollectionDetails()
     return { collections }
   } catch (error) {
     console.error('Error fetching collections:', error)
-    return { error: 'Ошибка при загрузке коллекций' }
+    return { error: 'Ошибка при получении коллекций' }
   }
 }
 
@@ -104,17 +116,6 @@ export async function getCollection(id: number) {
   }
 }
 
-// Получение всех превью коллекций
-export async function getCollectionPreviews() {
-  try {
-    const previews = await getAllCollectionPreviews()
-    return { collections: previews }
-  } catch (error) {
-    console.error('Error fetching collection previews:', error)
-    return { error: 'Ошибка при получении коллекций' }
-  }
-}
-
 // Создание нового превью коллекции
 export async function createCollectionPreview(data: NewCollectionPreview) {
   try {
@@ -178,9 +179,9 @@ export async function addCollectionPreview(data: FormData): Promise<PreviewRespo
       throw new Error('Failed to get preview ID')
     }
 
-    // 2. Создаем детальную страницу с тем же ID
+    // 2. Создаем детальную страницу с базовой структурой
     await db.insert(collectionDetails).values({
-      id: result.id, // Используем тот же ID
+      id: result.id,
       name: preview.title.toLowerCase(),
       bannerImage: preview.image,
       bannerTitle: preview.title,
@@ -189,16 +190,44 @@ export async function addCollectionPreview(data: FormData): Promise<PreviewRespo
       bannerLinkUrl: `/collections/collection-detail/${result.id}`
     })
 
-    // 3. Обновляем ссылку превью
+    // 3. Создаем пустые секции для детальной страницы
+    const emptySection = {
+      collectionDetailId: result.id,
+      title: "",
+      description: "",
+      linkText: "",
+      linkUrl: "",
+      order: 0
+    }
+
+    await Promise.all([
+      db.insert(collectionSections1).values(emptySection),
+      db.insert(collectionSections2).values({
+        ...emptySection,
+        titleDesc: "",
+        descriptionDesc: ""
+      }),
+      db.insert(collectionSections3).values(emptySection),
+      db.insert(collectionSections4).values({
+        collectionDetailId: result.id,
+        title: "",
+        description: "",
+        order: 0
+      })
+    ])
+
+    // 4. Обновляем ссылку превью
     await updateCollectionPreview(result.id, {
       link: `/collections/collection-detail/${result.id}`
     })
 
     revalidatePath('/collections')
+    revalidatePath('/admin/collections')
     revalidatePath('/admin/collection-detail')
 
     return { success: true, id: result.id }
   } catch (error) {
+    console.error('Error in addCollectionPreview:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Неизвестная ошибка'
@@ -208,11 +237,17 @@ export async function addCollectionPreview(data: FormData): Promise<PreviewRespo
 
 export async function deleteCollectionPreview(id: number) {
   try {
+    // Удаляем превью
     await db.delete(collectionPreviews)
       .where(eq(collectionPreviews.id, id))
 
+    // Удаляем детальную страницу
+    await db.delete(collectionDetails)
+      .where(eq(collectionDetails.id, id))
+
     revalidatePath('/admin/collections')
     revalidatePath('/collections')
+    revalidatePath('/admin/collection-detail')
     return { success: true }
   } catch (error) {
     console.error('Error deleting collection preview:', error)

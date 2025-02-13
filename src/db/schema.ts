@@ -94,11 +94,11 @@ export const collectionDetails = pgTable('collection_details', {
   bannerImage: text('banner_image').notNull(),
   bannerTitle: text('banner_title').notNull(),
   bannerDescription: text('banner_description').notNull(),
-  bannerLinkText: text('banner_link_text').notNull(),
-  bannerLinkUrl: text('banner_link_url').notNull(),
+  bannerLinkText: text('banner_link_text').default(''),
+  bannerLinkUrl: text('banner_link_url').default(''),
   createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-})
+  updatedAt: timestamp('updated_at').defaultNow()
+});
 
 // Секции типа 1 (стандартные секции)
 export const collectionSections1 = pgTable('collection_sections_1', {
@@ -106,10 +106,10 @@ export const collectionSections1 = pgTable('collection_sections_1', {
   collectionDetailId: integer('collection_detail_id').references(() => collectionDetails.id),
   title: text('title').notNull(),
   description: text('description').notNull(),
-  linkText: text('link_text').notNull(),
-  linkUrl: text('link_url').notNull(),
-  order: integer('order').notNull(),
-})
+  linkText: text('link_text').default(''),
+  linkUrl: text('link_url').default(''),
+  order: integer('order').notNull()
+});
 
 // Секции типа 2 (с дополнительным описанием)
 export const collectionSections2 = pgTable('collection_sections_2', {

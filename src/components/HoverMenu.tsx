@@ -43,7 +43,11 @@ export default function HoverMenu({ category, isVisible, onClose }: HoverMenuPro
           <ul className="space-y-2">
             {category.subcategories.map((subcat, index) => (
               <li key={index}>
-                <Link href={subcat.href} className="hover:underline">
+                <Link
+                  href={subcat.href}
+                  className="hover:underline"
+                  onClick={onClose} // Закрываем меню при клике
+                >
                   {subcat.name}
                 </Link>
               </li>

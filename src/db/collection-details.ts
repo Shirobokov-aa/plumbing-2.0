@@ -89,7 +89,9 @@ export async function createSectionImage(data: NewSectionImage): Promise<Section
 
 // Получить все секции и изображения для детальной страницы
 export async function getCollectionDetailWithSections(id: number) {
-  const detail = await getCollectionDetailById(id);
+  const [detail] = await db.select().from(collectionDetails)
+    .where(eq(collectionDetails.id, id));
+
   if (!detail) return null;
 
   const sections1 = await db.select().from(collectionSections1)
@@ -104,8 +106,20 @@ export async function getCollectionDetailWithSections(id: number) {
   // Получаем изображения для каждой секции
   const images = await db.select().from(collectionSectionImages);
 
+  // Формируем объект для баннера
+  const banner = {
+    image: detail.bannerImage,
+    title: detail.bannerTitle,
+    description: detail.bannerDescription,
+    link: {
+      text: detail.bannerLinkText || '',
+      url: detail.bannerLinkUrl || ''
+    }
+  };
+
   return {
     ...detail,
+    banner,
     sections1: sections1.map(s => ({
       ...s,
       images: images.filter(i => i.sectionId === s.id && i.sectionType === 'section1')

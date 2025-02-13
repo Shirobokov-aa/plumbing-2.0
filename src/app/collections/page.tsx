@@ -2,7 +2,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
-import { getCollections } from "@/app/actions/collections";
+import { getCollectionPreviews } from "@/app/actions/collections";
 
 // interface CollectionItem {
 //   id: number;
@@ -14,10 +14,10 @@ import { getCollections } from "@/app/actions/collections";
 // }
 
 export default async function Collections() {
-  const { collections, error } = await getCollections();
+  const { collections: collectionsData } = await getCollectionPreviews();
 
-  if (error) {
-    return <div>Ошибка загрузки коллекций: {error}</div>;
+  if (!collectionsData) {
+    return <div>Ошибка загрузки коллекций</div>;
   }
 
   return (
@@ -28,13 +28,19 @@ export default async function Collections() {
           <h2 className="lg:text-h2 text-h2Lg">Коллекции</h2>
         </div>
         <div className="flex flex-col gap-24 pt-24">
-          {collections?.map((item) => (
+          {collectionsData.map((item) => (
             <div
               key={item.id}
               className={`flex ${item.flexDirection} flex-col-reverse xl:gap-24 gap-5`}
             >
               <div className="xl:max-w-[526px] w-full">
-                <Image src={item.image} alt={item.title} width={526} height={526} className="object-contain" />
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={526}
+                  height={526}
+                  className="object-contain"
+                />
               </div>
               <div className="xl:max-w-[614px] w-full flex flex-col justify-around">
                 <div className="flex flex-col gap-11">

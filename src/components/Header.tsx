@@ -5,13 +5,12 @@ import { Search, Menu, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import HoverMenu from "./HoverMenu"
 import { useSections } from "@/app/admin/contexts/SectionsContext"
+import { getCollections } from "@/app/actions/collections"
 
 interface HeaderProps {
   defaultTextColor?: string
   activeTextColor?: string
 }
-
-
 
 export default function Header({ defaultTextColor = "text-white", activeTextColor = "text-black" }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(true)
@@ -20,37 +19,48 @@ export default function Header({ defaultTextColor = "text-white", activeTextColo
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [isMenuLocked, setIsMenuLocked] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [collections, setCollections] = useState<Array<{ name: string; id: number }>>([])
 
   const { collectionDetails } = useSections()
 
+  useEffect(() => {
+    const fetchCollections = async () => {
+      const response = await getCollections()
+      if (response.collections) {
+        setCollections(response.collections)
+      }
+    }
+    fetchCollections()
+  }, [])
+
   const categories = [
-  {
-    name: "Ванная",
-    subcategories: [
-      { name: "Смесители для ванной и душа", href: "/bathroom" },
-      { name: "Смесители для раковины", href: "/bathroom" },
-      { name: "Душевые системы", href: "/bathroom" },
-    ],
-    images: ["/img/item10.png", "/img/item11.png", "/img/item12.png"],
-  },
-  {
-    name: "Кухня",
-    subcategories: [
-      { name: "Смесители для кухни", href: "/kitchen" },
-      { name: "Аксессуары", href: "/kitchen" },
-    ],
-    images: ["", "/img/item11.png", "",],
-  },
-  {
-    name: "Коллекции",
-    subcategories: collectionDetails.map((collection) => ({
-      name: collection.name,
-      href: `/collections/collection-detail/${collection.name.toLowerCase()}`,
-    })),
-    images: ["/img/item11.png", "", ""],
-  },
-  // Добавьте остальные категории по необходимости
-]
+    {
+      name: "Ванная",
+      subcategories: [
+        { name: "Смесители для ванной и душа", href: "/bathroom" },
+        { name: "Смесители для раковины", href: "/bathroom" },
+        { name: "Душевые системы", href: "/bathroom" },
+      ],
+      images: ["/img/item10.png", "/img/item11.png", "/img/item12.png"],
+    },
+    {
+      name: "Кухня",
+      subcategories: [
+        { name: "Смесители для кухни", href: "/kitchen" },
+        { name: "Аксессуары", href: "/kitchen" },
+      ],
+      images: ["", "/img/item11.png", "",],
+    },
+    {
+      name: "Коллекции",
+      subcategories: collections?.map((collection) => ({
+        name: collection.name,
+        href: `/collections/collection-detail/${collection.id}`,
+      })) || [],
+      images: ["/img/item11.png", "", ""],
+    },
+    // Добавьте остальные категории по необходимости
+  ]
 
   useEffect(() => {
     const handleScroll = () => {

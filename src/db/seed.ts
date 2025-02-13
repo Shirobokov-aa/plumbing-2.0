@@ -42,19 +42,17 @@ async function seed() {
 
     // 3. Создаем детальные страницы
     const [eraDetail] = await db.insert(collectionDetails).values({
-      collectionId: previews[0].id,
       name: "era",
-      bannerImage: "/img/banner01.png",
-      bannerTitle: "Заголовок баннера",
-      bannerDescription: "Описание баннера",
-      bannerLinkText: "Какой-то текст",
+      bannerImage: "/img/era-banner.png",
+      bannerTitle: "Коллекция ERA",
+      bannerDescription: "Описание коллекции ERA",
+      bannerLinkText: "Подробнее",
       bannerLinkUrl: "/"
     }).returning();
 
     console.log('Created era detail:', eraDetail)
 
     const [sonoDetail] = await db.insert(collectionDetails).values({
-      collectionId: previews[1].id,
       name: "sono",
       bannerImage: "/img/banner01.png",
       bannerTitle: "Заголовок баннера",

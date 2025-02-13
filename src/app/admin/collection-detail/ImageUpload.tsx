@@ -1,11 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { useFieldArray, Control } from "react-hook-form"
-import Image from "next/image"
 import { X } from "lucide-react"
+import { ImageUpload as SingleImageUpload } from "@/components/ui/image-upload"
 import type { FormData } from "./CollectionDetailForm"
 
 interface ImageUploadProps {
@@ -29,21 +28,14 @@ export function ImageUpload({ name, control }: ImageUploadProps) {
               name={`${name}.${index}.src`}
               render={({ field: imageField }) => (
                 <FormItem>
-                  <FormLabel>URL изображения {index + 1}</FormLabel>
+                  <FormLabel>Изображение {index + 1}</FormLabel>
                   <FormControl>
-                    <div className="space-y-2">
-                      <Input {...imageField} />
-                      {imageField.value && (
-                        <div className="relative w-full h-40">
-                          <Image
-                            src={imageField.value}
-                            alt="Preview"
-                            fill
-                            className="object-cover rounded-md"
-                          />
-                        </div>
-                      )}
-                    </div>
+                    <SingleImageUpload
+                      value={imageField.value}
+                      onChange={imageField.onChange}
+                      className="w-full"
+                      height={200}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -55,7 +47,7 @@ export function ImageUpload({ name, control }: ImageUploadProps) {
                 <FormItem>
                   <FormLabel>Alt текст</FormLabel>
                   <FormControl>
-                    <Input {...altField} />
+                    <input {...altField} className="w-full p-2 border rounded" />
                   </FormControl>
                 </FormItem>
               )}

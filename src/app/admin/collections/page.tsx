@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
-import { getCollections, deleteCollectionPreview } from "@/app/actions/collections"
+import { getCollectionPreviews, deleteCollectionPreview } from "@/app/actions/collections"
 import { useRouter } from "next/navigation"
 
 type Collection = {
@@ -23,7 +23,7 @@ export default function CollectionsAdmin() {
 
   useEffect(() => {
     const loadCollections = async () => {
-      const { collections: data } = await getCollections()
+      const { collections: data } = await getCollectionPreviews()
       if (data) setCollections(data)
     }
     loadCollections()
