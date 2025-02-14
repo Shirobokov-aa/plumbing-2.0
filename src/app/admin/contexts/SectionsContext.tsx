@@ -2,10 +2,11 @@
 
 import type React from "react";
 import { createContext, useState, useContext } from "react";
+import { updateMainSection } from "@/app/actions/main-sections";
 
 export interface ImageBlockData {
   src: string;
-  alt: string;
+  alt?: string;
   desc?: string;
   url?: string;
 }
@@ -13,7 +14,10 @@ export interface ImageBlockData {
 interface Section {
   title?: string;
   description?: string;
-  link?: { name: string; url: string }; // url теперь всегда строка
+  link?: {
+    name?: string;
+    url?: string;
+  };
   images_block?: ImageBlockData[];
   images?: string[];
 }
@@ -78,11 +82,16 @@ interface AboutPage {
   // collections: KitchenCollection[]
 }
 
-interface BathroomCollection {
+export interface BathroomCollection {
+  id: number;
   title: string;
   description: string;
-  link: { text: string; url: string };
+  link: {
+    text: string;
+    url: string;
+  };
   images: ImageBlockData[];
+  order?: number;
 }
 
 interface KitchenCollection {
@@ -142,64 +151,21 @@ interface SectionsContextType {
   sections: SectionsMainPage;
   collections: CollectionItem[];
   collectionDetails: CollectionDetail[];
-  bathroomPage: BathroomPage; // Добавляем новое свойство
-  kitchenPage: KitchenPage; // Добавляем новое свойство
-  aboutPage: AboutPage; // Добавляем новое свойство
+  bathroomPage: BathroomPage;
+  kitchenPage: KitchenPage;
+  aboutPage: AboutPage;
   updateSection: (sectionKey: string, newData: Section) => void;
   updateCollections: (newCollections: CollectionItem[]) => void;
   updateCollectionDetail: (id: number, newData: CollectionDetail) => void;
-  updateBathroomPage: (newData: BathroomPage) => void; // Новая функция обновления
-  updateKitchenPage: (newData: KitchenPage) => void; // Новая функция обновления
-  updateAboutPage: (newData: AboutPage) => void; // Новая функция обновления
+  updateBathroomPage: (data: BathroomPage) => void;
+  updateKitchenPage: (newData: KitchenPage) => void;
+  updateAboutPage: (newData: AboutPage) => void;
 }
 
 const SectionsContext = createContext<SectionsContextType | undefined>(undefined);
 
-export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [sections, setSections] = useState<SectionsMainPage>({
-    "section-1": {
-      title: "Привет мир 123567",
-      description: "Какое то описание из объекта",
-      link: { name: "Посмотреть", url: "/123123" },
-      images_block: [
-        { src: "/img/item01.png", alt: "Image 1", desc: "ERA" },
-        { src: "/img/item02.png", alt: "Image 2", desc: "AMO" },
-      ],
-      images: ["/img/banner-little.png"],
-    },
-    "section-2": {
-      images: ["/img/banner01.png"],
-      link: { name: "Какая-то навигация", url: "/" },
-    },
-    "section-3": {
-      title: "ERA",
-      description: "Коллекция ERA воплощает гармонию современного дизайна и классических традиций...",
-      link: { name: "Посмотреть", url: "/" },
-      images: ["/img/item-era.png"],
-    },
-    "section-4": {
-      title: "Коллекции",
-      description: "Описание для коллекций",
-      link: { name: "Смотреть", url: "/" },
-      images_block: [
-        { src: "/img/item01.png", alt: "Banner 1", desc: "ERA" },
-        { src: "/img/item02.png", alt: "Banner 2", desc: "AMO" },
-        { src: "/img/item03.png", alt: "Image 3", desc: "TWIST" },
-        { src: "/img/item01.png", alt: "Image 1", desc: "ERA" },
-      ],
-    },
-    "section-5": {
-      title: "Какой-то заголовок",
-      description: "Описание для этого блока",
-      link: { name: "Посмотреть", url: "/" },
-      images_block: [
-        { src: "/img/item10.png", alt: "Item 10", desc: "Description 1" },
-        { src: "/img/item11.png", alt: "Item 11", desc: "Description 2" },
-        { src: "/img/item12.png", alt: "Item 12", desc: "Description 3" },
-      ],
-    },
-  });
-
+export function SectionsProvider({ children, initialData }: { children: React.ReactNode, initialData: BathroomPage }) {
+  const [sections, setSections] = useState<SectionsMainPage>({});
   const [collections, setCollections] = useState<CollectionItem[]>([
     {
       id: 1,
@@ -226,7 +192,6 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       flexDirection: "xl:flex-row",
     },
   ]);
-
   const [collectionDetails, setCollectionDetails] = useState<CollectionDetail[]>([
     {
       id: 1,
@@ -367,60 +332,11 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     },
   ]);
 
-  const [bathroomPage, setBathroomPage] = useState<BathroomPage>({
-    banner: {
-      name: "Ванная",
-      image: "/img/banner01.png",
-      title: "",
-      description: "",
-      link: { text: "Узнать больше", url: "/bathroom" },
-    },
-    sections: [
-      {
-        title: "Смесители для ванной и душа",
-        description: "Удобство, стиль и надежность в каждом решении",
-        link: { text: "Смотреть", url: "/bathroom/faucets" },
-        images: [
-          { src: "", alt: "Смеситель для ванной 1" },
-          { src: "", alt: "Смеситель для ванной 2" },
-          { src: "", alt: "Смеситель для ванной 3" },
-        ],
-      },
-      {
-        title: "Смесители для раковины",
-        description: "Удобство, стиль и надежность в каждом решении",
-        link: { text: "Смотреть", url: "/bathroom/faucets" },
-        images: [
-          { src: "", alt: "Смеситель для ванной 1" },
-          { src: "", alt: "Смеситель для ванной 2" },
-          { src: "", alt: "Смеситель для ванной 3" },
-        ],
-      },
-      {
-        title: "Душевые системы",
-        description: "Удобство, стиль и надежность в каждом решении",
-        link: { text: "Смотреть", url: "/bathroom/faucets" },
-        images: [
-          { src: "", alt: "Смеситель для ванной 1" },
-          { src: "", alt: "Смеситель для ванной 2" },
-          { src: "", alt: "Смеситель для ванной 3" },
-        ],
-      },
-    ],
-    collections: [
-
-      {
-        title: "Коллекция для ванной",
-        description: "Элегантность и функциональность в каждой детали",
-        link: { text: "Подробнее", url: "/bathroom/collections/1" },
-        images: [
-          { src: "/img/item01.png", alt: "Коллекция для ванной 1" },
-          { src: "/img/item01.png", alt: "Коллекция для ванной 2" },
-          { src: "/img/item01.png", alt: "Коллекция для ванной 3" },
-        ],
-      },
-    ],
-  });
+  const [bathroomPage, setBathroomPage] = useState(() => ({
+    banner: initialData?.banner || {},
+    sections: initialData?.sections || [],
+    collections: initialData?.collections || []
+  }));
 
   const [kitchenPage, setKitchenPage] = useState<KitchenPage>({
     banner: {
@@ -486,11 +402,15 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     ],
   });
 
-  const updateSection = (sectionKey: string, newData: Section) => {
-    setSections((prevSections) => ({
-      ...prevSections,
-      [sectionKey]: newData,
-    }));
+  const updateSection = async (sectionKey: string, data: Section) => {
+    const result = await updateMainSection(sectionKey, data);
+    if (result.success) {
+      setSections(prev => ({
+        ...prev,
+        [sectionKey]: data
+      }));
+    }
+    return result;
   };
 
   const updateCollections = (newCollections: CollectionItem[]) => {
@@ -501,9 +421,8 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCollectionDetails((prevDetails) => prevDetails.map((detail) => (detail.id === id ? newData : detail)));
   };
 
-  // Функция обновления данных страницы ванной
-  const updateBathroomPage = (newData: BathroomPage) => {
-    setBathroomPage(newData);
+  const updateBathroomPage = (data: BathroomPage) => {
+    setBathroomPage(data);
   };
 
   const updateKitchenPage = (newData: KitchenPage) => {
@@ -519,26 +438,26 @@ export const SectionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         sections,
         collections,
         collectionDetails,
-        bathroomPage, // Добавляем новое свойство
-        kitchenPage, // Добавляем новое свойство
-        aboutPage, // Добавляем новое свойство
+        bathroomPage,
+        kitchenPage,
+        aboutPage,
         updateSection,
         updateCollections,
         updateCollectionDetail,
-        updateBathroomPage, // Добавляем новую функцию обновления
-        updateKitchenPage, // Добавляем новую функцию обновления
-        updateAboutPage, // Добавляем новую функцию обновления
+        updateBathroomPage,
+        updateKitchenPage,
+        updateAboutPage,
       }}
     >
       {children}
     </SectionsContext.Provider>
   );
-};
+}
 
-export const useSections = () => {
+export function useSections() {
   const context = useContext(SectionsContext);
   if (context === undefined) {
     throw new Error("useSections must be used within a SectionsProvider");
   }
   return context;
-};
+}

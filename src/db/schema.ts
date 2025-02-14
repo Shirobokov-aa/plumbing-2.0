@@ -1,7 +1,8 @@
-import { integer, pgTable, varchar, jsonb, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, jsonb, serial, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -258,3 +259,117 @@ export const insertSection2Schema = createInsertSchema(collectionSections2)
 export const insertSection3Schema = createInsertSchema(collectionSections3)
 export const insertSection4Schema = createInsertSchema(collectionSections4)
 export const insertSectionImageSchema = createInsertSchema(collectionSectionImages)
+
+
+// MAIN PAGE
+
+export const mainSections = pgTable('main_sections', {
+  id: serial('id').primaryKey(),
+  sectionKey: varchar('section_key').notNull(), // section-1, section-2, etc.
+  title: text('title'),
+  description: text('description'),
+  linkName: varchar('link_name'),
+  linkUrl: varchar('link_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const mainSectionImages = pgTable('main_section_images', {
+  id: serial('id').primaryKey(),
+  sectionId: integer('section_id').references(() => mainSections.id, { onDelete: 'cascade' }),
+  src: text('src').notNull(),
+  alt: varchar('alt'),
+  desc: text('description'),
+  url: varchar('url'),
+  isMain: boolean('is_main').default(false),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+// Добавляем relations
+export const mainSectionsRelations = relations(mainSections, ({ many }) => ({
+  images: many(mainSectionImages)
+}))
+
+export const mainSectionImagesRelations = relations(mainSectionImages, ({ one }) => ({
+  section: one(mainSections, {
+    fields: [mainSectionImages.sectionId],
+    references: [mainSections.id],
+  })
+}))
+
+export type MainSection = typeof mainSections.$inferSelect
+export type NewMainSection = typeof mainSections.$inferInsert
+export type MainSectionImage = typeof mainSectionImages.$inferSelect
+export type NewMainSectionImage = typeof mainSectionImages.$inferInsert
+
+// BATHROOM PAGE
+export const bathroomBanner = pgTable('bathroom_banner', {
+  id: serial('id').primaryKey(),
+  name: text('name'),
+  title: text('title'),
+  description: text('description'),
+  image: text('image'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const bathroomSections = pgTable('bathroom_sections', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  description: text('description'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const bathroomCollections = pgTable('bathroom_collections', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  description: text('description'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const bathroomImages = pgTable('bathroom_images', {
+  id: serial('id').primaryKey(),
+  sectionId: integer('section_id').references(() => bathroomSections.id, { onDelete: 'cascade' }),
+  collectionId: integer('collection_id').references(() => bathroomCollections.id, { onDelete: 'cascade' }),
+  src: text('src').notNull(),
+  alt: varchar('alt'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+// Relations
+export const bathroomSectionsRelations = relations(bathroomSections, ({ many }) => ({
+  images: many(bathroomImages, { relationName: 'section_images' })
+}))
+
+export const bathroomCollectionsRelations = relations(bathroomCollections, ({ many }) => ({
+  images: many(bathroomImages, { relationName: 'collection_images' })
+}))
+
+// Types
+export type BathroomSection = typeof bathroomSections.$inferSelect & {
+  images: typeof bathroomImages.$inferSelect[]
+}
+
+export type BathroomCollection = typeof bathroomCollections.$inferSelect & {
+  images: typeof bathroomImages.$inferSelect[]
+}
+
+export type BathroomBanner = typeof bathroomBanner.$inferSelect
+export type NewBathroomBanner = typeof bathroomBanner.$inferInsert
+
+export type BathroomImage = typeof bathroomImages.$inferSelect
+export type NewBathroomImage = typeof bathroomImages.$inferInsert

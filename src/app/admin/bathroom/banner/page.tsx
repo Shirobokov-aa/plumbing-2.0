@@ -7,13 +7,37 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
+import { updateBathroomBanner } from "@/app/actions/bathroom"
 
 export default function BathroomBannerAdminPage() {
-  const { bathroomPage, updateBathroomPage } = useSections()
-  const [banner, setBanner] = useState(bathroomPage.banner)
+  const { bathroomPage } = useSections()
+  const [banner, setBanner] = useState({
+    name: bathroomPage?.banner?.name || '',
+    title: bathroomPage?.banner?.title || '',
+    description: bathroomPage?.banner?.description || '',
+    image: bathroomPage?.banner?.image || '',
+    link: {
+      text: bathroomPage?.banner?.link?.text || '',
+      url: bathroomPage?.banner?.link?.url || ''
+    }
+  })
 
-  const handleSave = () => {
-    updateBathroomPage({ ...bathroomPage, banner })
+  const handleSave = async () => {
+    const data = {
+      name: banner.name,
+      title: banner.title,
+      description: banner.description,
+      image: banner.image,
+      linkText: banner.link.text,
+      linkUrl: banner.link.url,
+    }
+
+    const result = await updateBathroomBanner(data)
+    if (result.success) {
+      // Показать уведомление об успехе
+    } else {
+      // Показать ошибку
+    }
   }
 
   const handleChange = (field: string, value: string) => {
