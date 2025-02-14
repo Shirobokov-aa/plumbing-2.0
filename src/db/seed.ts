@@ -11,6 +11,7 @@ import {
 import { seed as seedMainSections } from './migrations/0004_main_sections'
 import { seedBathroom } from './migrations/0005_bathroom_seed'
 import { kitchenBanner, kitchenSections, kitchenCollections, kitchenImages } from './schema'
+import { aboutBanner, aboutSections } from './schema'
 
 // Основной сид для коллекций
 export async function seed() {
@@ -364,12 +365,59 @@ async function seedKitchenOnly() {
   }
 }
 
+// Функция для заполнения данных страницы "О нас"
+async function seedAbout() {
+  try {
+    // Создаем баннер
+    await db.insert(aboutBanner).values({
+      name: "О Компании",
+      title: "О нашей компании",
+      description: "Мы специализируемся на создании уникальных решений для вашего дома",
+      image: "/img/about-banner.jpg",
+      linkText: "Посмотреть коллекции",
+      linkUrl: "/collections"
+    })
+
+    // Создаем секции
+    await db.insert(aboutSections).values([
+      {
+        title: "Наша история",
+        description: "История нашей компании началась...",
+        order: 1
+      },
+      {
+        title: "Наша миссия",
+        description: "Наша миссия заключается в...",
+        order: 2
+      }
+    ])
+
+    console.log('About page seed completed successfully')
+  } catch (error) {
+    console.error('Error seeding about page data:', error)
+    throw error
+  }
+}
+
+// Функция для запуска только сида "О нас"
+async function seedAboutOnly() {
+  try {
+    await seedAbout()
+    console.log('About seed completed successfully')
+  } catch (error) {
+    console.error('Error during about seed:', error)
+    process.exit(1)
+  }
+}
+
 // Определяем, какой сид запускать на основе аргументов командной строки
 const args = process.argv.slice(2)
 if (args.includes('--bathroom-only')) {
   seedBathroomOnly()
 } else if (args.includes('--kitchen-only')) {
   seedKitchenOnly()
+} else if (args.includes('--about-only')) {
+  seedAboutOnly()
 } else {
   // Запускаем все сиды
   async function main() {
@@ -378,6 +426,7 @@ if (args.includes('--bathroom-only')) {
       await seedMainSections()
       await seedBathroom()
       await seedKitchen()
+      await seedAbout()
       console.log('All seeds completed successfully')
     } catch (error) {
       console.error('Error during seed:', error)

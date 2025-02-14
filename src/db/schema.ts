@@ -462,3 +462,30 @@ export const kitchenImagesRelations = relations(kitchenImages, ({ one }) => ({
     references: [kitchenCollections.id],
   })
 }))
+
+// Таблицы для страницы "О нас"
+export const aboutBanner = pgTable('about_banner', {
+  id: serial('id').primaryKey(),
+  name: text('name'),
+  title: text('title'),
+  description: text('description'),
+  image: text('image'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const aboutSections = pgTable('about_sections', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  description: text('description'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+// Relations для страницы "О нас"
+export const aboutBannerRelations = relations(aboutBanner, ({}) => ({}))
+
+export const aboutSectionsRelations = relations(aboutSections, ({}) => ({}))

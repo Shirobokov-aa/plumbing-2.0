@@ -8,13 +8,33 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Slash } from "lucide-react";
-import { useSections } from "@/app/admin/contexts/SectionsContext";
 import AboutBanner from "@/components/about/AboutBanner";
 import AboutShower from "@/components/about/AboutShower";
 
-export default function AboutPage() {
-  const { aboutPage } = useSections();
+interface AboutPageData {
+  banner: {
+    name: string;
+    image: string;
+    title: string;
+    description: string;
+    link: {
+      text: string;
+      url: string;
+    };
+  };
+  sections: Array<{
+    id: number;
+    title: string;
+    description: string;
+    order: number;
+  }>;
+}
 
+interface AboutContentProps {
+  data: AboutPageData;
+}
+
+export default function AboutContent({ data }: AboutContentProps) {
   return (
     <>
       <section>
@@ -28,18 +48,20 @@ export default function AboutPage() {
                 <Slash />
               </BreadcrumbSeparator>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/kitchen">О компании</BreadcrumbLink>
+                <BreadcrumbLink href="/about">О компании</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </section>
+      {data.banner && (
+        <section>
+          <AboutBanner {...data.banner} />
+        </section>
+      )}
       <section>
-        <AboutBanner {...aboutPage.banner} />
-      </section>
-      <section>
-        {aboutPage.sections.map((section, index) => (
-          <section key={index}>
+        {data.sections.map((section) => (
+          <section key={section.id}>
             <AboutShower {...section} />
           </section>
         ))}
