@@ -199,23 +199,10 @@ export async function updateCollectionDetail(id: number, data: Partial<Collectio
       bannerLinkUrl: data.bannerLinkUrl,
     })
 
-    // Сначала получаем все секции для этой коллекции
-    const sections1 = await db.select().from(collectionSections1)
-      .where(eq(collectionSections1.collectionDetailId, id))
-    const sections2 = await db.select().from(collectionSections2)
-      .where(eq(collectionSections2.collectionDetailId, id))
-    const sections3 = await db.select().from(collectionSections3)
-      .where(eq(collectionSections3.collectionDetailId, id))
-    const sections4 = await db.select().from(collectionSections4)
-      .where(eq(collectionSections4.collectionDetailId, id))
+    // Удаляем существующие изображения и секции
+    await db.delete(collectionSectionImages)
+      .where(eq(collectionSectionImages.sectionId, id))
 
-    // Удаляем изображения для каждой секции
-    for (const section of [...sections1, ...sections2, ...sections3, ...sections4]) {
-      await db.delete(collectionSectionImages)
-        .where(eq(collectionSectionImages.sectionId, section.id))
-    }
-
-    // Удаляем секции
     await db.delete(collectionSections1)
       .where(eq(collectionSections1.collectionDetailId, id))
     await db.delete(collectionSections2)
@@ -272,35 +259,7 @@ export async function updateCollectionDetail(id: number, data: Partial<Collectio
 // Удалить детальную страницу
 export async function deleteCollectionDetail(id: number) {
   try {
-    // Получаем все секции для этой коллекции
-    const sections1 = await db.select().from(collectionSections1)
-      .where(eq(collectionSections1.collectionDetailId, id))
-    const sections2 = await db.select().from(collectionSections2)
-      .where(eq(collectionSections2.collectionDetailId, id))
-    const sections3 = await db.select().from(collectionSections3)
-      .where(eq(collectionSections3.collectionDetailId, id))
-    const sections4 = await db.select().from(collectionSections4)
-      .where(eq(collectionSections4.collectionDetailId, id))
-
-    // Удаляем изображения для каждой секции
-    for (const section of [...sections1, ...sections2, ...sections3, ...sections4]) {
-      await db.delete(collectionSectionImages)
-        .where(eq(collectionSectionImages.sectionId, section.id))
-    }
-
-    // Удаляем все секции
-    await db.delete(collectionSections1)
-      .where(eq(collectionSections1.collectionDetailId, id))
-    await db.delete(collectionSections2)
-      .where(eq(collectionSections2.collectionDetailId, id))
-    await db.delete(collectionSections3)
-      .where(eq(collectionSections3.collectionDetailId, id))
-    await db.delete(collectionSections4)
-      .where(eq(collectionSections4.collectionDetailId, id))
-
-    // Удаляем саму детальную страницу
     await deleteDetail(id)
-
     return { success: true }
   } catch (error) {
     console.error('Error deleting collection detail:', error)

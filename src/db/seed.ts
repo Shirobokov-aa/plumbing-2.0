@@ -8,11 +8,8 @@ import {
   collectionSections4,
   collectionSectionImages
 } from "@/db/schema"
-import { seed as seedMainSections } from './migrations/0004_main_sections'
-import { seedBathroom } from './migrations/0005_bathroom_seed'
 
-// Основной сид для коллекций
-export async function seed() {
+async function seed() {
   try {
     // 1. Сначала удаляем все данные
     await db.delete(collectionSectionImages)
@@ -262,33 +259,12 @@ export async function seed() {
   }
 }
 
-// Функция для запуска только сида ванной
-async function seedBathroomOnly() {
-  try {
-    await seedBathroom()
-    console.log('Bathroom seed completed successfully')
-  } catch (error) {
-    console.error('Error during bathroom seed:', error)
+seed()
+  .then(() => {
+    console.log('Seeding completed successfully')
+    process.exit(0)
+  })
+  .catch((error) => {
+    console.error('Seeding failed:', error)
     process.exit(1)
-  }
-}
-
-// Определяем, какой сид запускать на основе аргументов командной строки
-const args = process.argv.slice(2)
-if (args.includes('--bathroom-only')) {
-  seedBathroomOnly()
-} else {
-  // Запускаем все сиды
-  async function main() {
-    try {
-      await seed()
-      await seedMainSections()
-      await seedBathroom()
-      console.log('All seeds completed successfully')
-    } catch (error) {
-      console.error('Error during seed:', error)
-      process.exit(1)
-    }
-  }
-  main()
-}
+  })

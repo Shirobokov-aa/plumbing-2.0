@@ -10,60 +10,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Slash } from "lucide-react"
+import { useSections } from "@/app/admin/contexts/SectionsContext"
 import BathroomCollection from "@/components/bathroom/BathroomCollection"
-import type {
-  BathroomBanner as BathroomBannerType,
-  BathroomSection,
-  BathroomCollection as BathroomCollectionType
-} from "@/db/schema"
 
-interface BathroomContentProps {
-  initialData: {
-    banner: BathroomBannerType
-    sections: BathroomSection[]
-    collections: BathroomCollectionType[]
-  }
-}
-
-export default function BathroomContent({ initialData }: BathroomContentProps) {
-  const bannerData = {
-    name: initialData.banner.name || '',
-    title: initialData.banner.title || '',
-    description: initialData.banner.description || '',
-    image: initialData.banner.image || '',
-    link: {
-      text: initialData.banner.linkText || '',
-      url: initialData.banner.linkUrl || ''
-    }
-  }
-
-  const sectionsData = initialData.sections.map(section => ({
-    title: section.title || '',
-    description: section.description || '',
-    link: {
-      text: section.linkText || '',
-      url: section.linkUrl || ''
-    },
-    images: section.images.map(img => ({
-      src: img.src,
-      alt: img.alt || '',
-      desc: ''
-    }))
-  }))
-
-  const collectionsData = initialData.collections.map(collection => ({
-    title: collection.title || '',
-    description: collection.description || '',
-    link: {
-      text: collection.linkText || '',
-      url: collection.linkUrl || ''
-    },
-    images: collection.images.map(img => ({
-      src: img.src,
-      alt: img.alt || '',
-      desc: ''
-    }))
-  }))
+export default function BathroomPage() {
+  const { bathroomPage } = useSections()
 
   return (
     <>
@@ -85,14 +36,14 @@ export default function BathroomContent({ initialData }: BathroomContentProps) {
         </div>
       </section>
       <section>
-        <BathroomBanner {...bannerData} />
+        <BathroomBanner {...bathroomPage.banner} />
       </section>
-      {sectionsData.map((section, index) => (
+      {bathroomPage.sections.map((section, index) => (
         <section key={index}>
           <BathShower {...section} />
         </section>
       ))}
-      {collectionsData.map((collection, index) => (
+            {bathroomPage.collections.map((collection, index) => (
         <section key={index}>
           <BathroomCollection {...collection} />
         </section>

@@ -8,44 +8,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateBathroomSection } from "@/app/actions/bathroom"
 
 export default function BathroomSectionsAdminPage() {
-  const { bathroomPage } = useSections()
+  const { bathroomPage, updateBathroomPage } = useSections()
+  const [sections, setSections] = useState(bathroomPage.sections)
 
-  const [sections, setSections] = useState(() =>
-    bathroomPage?.sections?.map(section => ({
-      id: section.id,
-      title: section.title || '',
-      description: section.description || '',
-      link: {
-        text: section.link?.text || '',
-        url: section.link?.url || ''
-      },
-      images: section.images?.map(img => ({
-        src: img.src || '',
-        alt: img.alt || '',
-        order: img.order || 0
-      })) || [],
-      order: section.order || 0
-    })) || []
-  )
-
-  const handleSave = async () => {
-    for (const section of sections) {
-      await updateBathroomSection(section.id, {
-        title: section.title,
-        description: section.description,
-        linkText: section.link.text,  // изменено с linkText
-        linkUrl: section.link.url,    // изменено с linkUrl
-        order: section.order,
-        images: section.images.map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
-      })
-    }
+  const handleSave = () => {
+    updateBathroomPage({ ...bathroomPage, sections })
   }
 
   const handleSectionChange = (index: number, field: string, value: string) => {

@@ -8,44 +8,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateBathroomCollection } from "@/app/actions/bathroom"
 
 export default function BathroomCollectionsAdminPage() {
-  const { bathroomPage } = useSections()
+  const { bathroomPage, updateBathroomPage } = useSections()
+  const [collections, setCollections] = useState(bathroomPage.collections)
 
-  const [collections, setCollections] = useState(() =>
-    bathroomPage?.collections?.map(collection => ({
-      id: collection.id,
-      title: collection.title || '',
-      description: collection.description || '',
-      link: {
-        text: collection.link?.text || '',
-        url: collection.link?.url || ''
-      },
-      images: collection.images?.map(img => ({
-        src: img.src || '',
-        alt: img.alt || '',
-        order: img.order || 0
-      })) || [],
-      order: collection.order || 0
-    })) || []
-  )
-
-  const handleSave = async () => {
-    for (const collection of collections) {
-      await updateBathroomCollection(collection.id, {
-        title: collection.title,
-        description: collection.description,
-        linkText: collection.link.text,  // изменено с linkText
-        linkUrl: collection.link.url,    // изменено с linkUrl
-        order: collection.order,
-        images: collection.images.map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
-      })
-    }
+  const handleSave = () => {
+    updateBathroomPage({ ...bathroomPage, collections })
   }
 
   const handleCollectionChange = (index: number, field: string, value: string) => {
