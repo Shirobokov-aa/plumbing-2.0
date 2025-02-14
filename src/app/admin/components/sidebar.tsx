@@ -15,6 +15,7 @@ export function Sidebar() {
     {
       title: "Главная страница",
       items: [
+        { title: "Слайдер", href: "/admin/slider" },
         { title: "Секция 1", href: "/admin/main/section-1" },
         { title: "Секция 2", href: "/admin/main/section-2" },
         { title: "Секция 3", href: "/admin/main/section-3" },

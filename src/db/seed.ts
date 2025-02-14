@@ -12,6 +12,7 @@ import { seed as seedMainSections } from './migrations/0004_main_sections'
 import { seedBathroom } from './migrations/0005_bathroom_seed'
 import { kitchenBanner, kitchenSections, kitchenCollections, kitchenImages } from './schema'
 import { aboutBanner, aboutSections } from './schema'
+import { mainSlider } from './schema'
 
 // Основной сид для коллекций
 export async function seed() {
@@ -410,6 +411,52 @@ async function seedAboutOnly() {
   }
 }
 
+// Функция для заполнения данных слайдера
+async function seedMainSlider() {
+  try {
+    // Создаем слайды
+    await db.insert(mainSlider).values([
+      {
+        desktopImage: "/img/banner01.png",
+        mobileImage: "/img/banner01-mobile.png",
+        title: "Коллекция ERA",
+        linkUrl: "/collections/era",
+        order: 1
+      },
+      {
+        desktopImage: "/img/banner02.png",
+        mobileImage: "/img/banner02-mobile.png",
+        title: "Коллекция SONO",
+        linkUrl: "/collections/sono",
+        order: 2
+      },
+      {
+        desktopImage: "/img/banner03.png",
+        mobileImage: "/img/banner03-mobile.png",
+        title: "Кухни",
+        linkUrl: "/kitchen",
+        order: 3
+      }
+    ])
+
+    console.log('Main slider seed completed successfully')
+  } catch (error) {
+    console.error('Error seeding main slider data:', error)
+    throw error
+  }
+}
+
+// Функция для запуска только сида слайдера
+async function seedSliderOnly() {
+  try {
+    await seedMainSlider()
+    console.log('Slider seed completed successfully')
+  } catch (error) {
+    console.error('Error during slider seed:', error)
+    process.exit(1)
+  }
+}
+
 // Определяем, какой сид запускать на основе аргументов командной строки
 const args = process.argv.slice(2)
 if (args.includes('--bathroom-only')) {
@@ -418,6 +465,8 @@ if (args.includes('--bathroom-only')) {
   seedKitchenOnly()
 } else if (args.includes('--about-only')) {
   seedAboutOnly()
+} else if (args.includes('--slider-only')) {
+  seedSliderOnly()
 } else {
   // Запускаем все сиды
   async function main() {
@@ -427,6 +476,7 @@ if (args.includes('--bathroom-only')) {
       await seedBathroom()
       await seedKitchen()
       await seedAbout()
+      await seedMainSlider()
       console.log('All seeds completed successfully')
     } catch (error) {
       console.error('Error during seed:', error)

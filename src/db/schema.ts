@@ -489,3 +489,17 @@ export const aboutSections = pgTable('about_sections', {
 export const aboutBannerRelations = relations(aboutBanner, ({}) => ({}))
 
 export const aboutSectionsRelations = relations(aboutSections, ({}) => ({}))
+
+// Таблица для слайдера на главной странице
+export const mainSlider = pgTable('main_slider', {
+  id: serial('id').primaryKey(),
+  desktopImage: text('desktop_image').notNull(),
+  mobileImage: text('mobile_image').notNull(),
+  title: text('title').notNull(),
+  linkUrl: varchar('link_url').notNull(),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const mainSliderRelations = relations(mainSlider, ({}) => ({}))
