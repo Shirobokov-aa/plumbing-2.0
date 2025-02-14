@@ -46,6 +46,8 @@ export async function getMainSections(): Promise<FormattedSection> {
       }
     })
 
+    console.log('Loaded sections from DB:', sections) // Для отладки
+
     // Преобразуем данные в формат, ожидаемый фронтендом
     const formattedSections = sections.reduce<FormattedSection>((acc, section) => {
       const mainImages = section.images.filter(img => img.isMain)
@@ -68,6 +70,8 @@ export async function getMainSections(): Promise<FormattedSection> {
       }
       return acc
     }, {})
+
+    console.log('Formatted sections:', formattedSections) // Для отладки
 
     return formattedSections
   } catch (error) {

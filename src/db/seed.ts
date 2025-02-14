@@ -10,6 +10,7 @@ import {
 } from "@/db/schema"
 import { seed as seedMainSections } from './migrations/0004_main_sections'
 import { seedBathroom } from './migrations/0005_bathroom_seed'
+import { kitchenBanner, kitchenSections, kitchenCollections, kitchenImages } from './schema'
 
 // Основной сид для коллекций
 export async function seed() {
@@ -273,10 +274,102 @@ async function seedBathroomOnly() {
   }
 }
 
+// Функция для заполнения данных кухни
+async function seedKitchen() {
+  try {
+    // Создаем баннер
+    await db.insert(kitchenBanner).values({
+      name: "Кухня",
+      title: "Кухня",
+      description: "Описание кухни",
+      image: "/images/kitchen/banner.png",
+      linkText: "Подробнее",
+      linkUrl: "/kitchen/details"
+    })
+
+    // Создаем секции
+    const [section1, section2] = await db.insert(kitchenSections).values([
+      {
+        title: "Кухонные гарнитуры",
+        description: "Описание кухонных гарнитуров",
+        linkText: "Смотреть все",
+        linkUrl: "/kitchen/furniture",
+        order: 1
+      },
+      {
+        title: "Мойки и смесители",
+        description: "Описание моек и смесителей",
+        linkText: "Смотреть все",
+        linkUrl: "/kitchen/sinks",
+        order: 2
+      }
+    ]).returning()
+
+    // Создаем коллекции
+    const [collection1] = await db.insert(kitchenCollections).values({
+      title: "Коллекция для кухни",
+      description: "Описание коллекции",
+      linkText: "Подробнее",
+      linkUrl: "/kitchen/collection1",
+      order: 1
+    }).returning()
+
+    // Добавляем изображения для секций
+    await db.insert(kitchenImages).values([
+      {
+        sectionId: section1.id,
+        src: "/images/kitchen/furniture1.png",
+        alt: "Гарнитур 1",
+        order: 1
+      },
+      {
+        sectionId: section1.id,
+        src: "/images/kitchen/furniture2.png",
+        alt: "Гарнитур 2",
+        order: 2
+      },
+      {
+        sectionId: section2.id,
+        src: "/images/kitchen/sink1.png",
+        alt: "Мойка 1",
+        order: 1
+      }
+    ])
+
+    // Добавляем изображения для коллекций
+    await db.insert(kitchenImages).values([
+      {
+        collectionId: collection1.id,
+        src: "/images/kitchen/collection1.png",
+        alt: "Коллекция 1",
+        order: 1
+      }
+    ])
+
+    console.log('Kitchen seed completed successfully')
+  } catch (error) {
+    console.error('Error seeding kitchen data:', error)
+    throw error
+  }
+}
+
+// Функция для запуска только сида кухни
+async function seedKitchenOnly() {
+  try {
+    await seedKitchen()
+    console.log('Kitchen seed completed successfully')
+  } catch (error) {
+    console.error('Error during kitchen seed:', error)
+    process.exit(1)
+  }
+}
+
 // Определяем, какой сид запускать на основе аргументов командной строки
 const args = process.argv.slice(2)
 if (args.includes('--bathroom-only')) {
   seedBathroomOnly()
+} else if (args.includes('--kitchen-only')) {
+  seedKitchenOnly()
 } else {
   // Запускаем все сиды
   async function main() {
@@ -284,6 +377,7 @@ if (args.includes('--bathroom-only')) {
       await seed()
       await seedMainSections()
       await seedBathroom()
+      await seedKitchen()
       console.log('All seeds completed successfully')
     } catch (error) {
       console.error('Error during seed:', error)

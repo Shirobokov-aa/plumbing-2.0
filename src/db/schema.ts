@@ -350,13 +350,30 @@ export const bathroomImages = pgTable('bathroom_images', {
   updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-// Relations
+// Relations для ванной
 export const bathroomSectionsRelations = relations(bathroomSections, ({ many }) => ({
-  images: many(bathroomImages, { relationName: 'section_images' })
+  images: many(bathroomImages, {
+    fields: [bathroomSections.id],
+    references: [bathroomImages.sectionId],
+  })
 }))
 
 export const bathroomCollectionsRelations = relations(bathroomCollections, ({ many }) => ({
-  images: many(bathroomImages, { relationName: 'collection_images' })
+  images: many(bathroomImages, {
+    fields: [bathroomCollections.id],
+    references: [bathroomImages.collectionId],
+  })
+}))
+
+export const bathroomImagesRelations = relations(bathroomImages, ({ one }) => ({
+  section: one(bathroomSections, {
+    fields: [bathroomImages.sectionId],
+    references: [bathroomSections.id],
+  }),
+  collection: one(bathroomCollections, {
+    fields: [bathroomImages.collectionId],
+    references: [bathroomCollections.id],
+  })
 }))
 
 // Types
@@ -373,3 +390,75 @@ export type NewBathroomBanner = typeof bathroomBanner.$inferInsert
 
 export type BathroomImage = typeof bathroomImages.$inferSelect
 export type NewBathroomImage = typeof bathroomImages.$inferInsert
+
+// Таблицы для страницы кухни
+export const kitchenBanner = pgTable('kitchen_banner', {
+  id: serial('id').primaryKey(),
+  name: text('name'),
+  title: text('title'),
+  description: text('description'),
+  image: text('image'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const kitchenSections = pgTable('kitchen_sections', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  description: text('description'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const kitchenCollections = pgTable('kitchen_collections', {
+  id: serial('id').primaryKey(),
+  title: text('title'),
+  description: text('description'),
+  linkText: varchar('link_text'),
+  linkUrl: varchar('link_url'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const kitchenImages = pgTable('kitchen_images', {
+  id: serial('id').primaryKey(),
+  sectionId: integer('section_id').references(() => kitchenSections.id, { onDelete: 'cascade' }),
+  collectionId: integer('collection_id').references(() => kitchenCollections.id, { onDelete: 'cascade' }),
+  src: text('src').notNull(),
+  alt: varchar('alt'),
+  order: integer('order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+// Relations для кухни
+export const kitchenSectionsRelations = relations(kitchenSections, ({ many }) => ({
+  images: many(kitchenImages, {
+    fields: [kitchenSections.id],
+    references: [kitchenImages.sectionId],
+  })
+}))
+
+export const kitchenCollectionsRelations = relations(kitchenCollections, ({ many }) => ({
+  images: many(kitchenImages, {
+    fields: [kitchenCollections.id],
+    references: [kitchenImages.collectionId],
+  })
+}))
+
+export const kitchenImagesRelations = relations(kitchenImages, ({ one }) => ({
+  section: one(kitchenSections, {
+    fields: [kitchenImages.sectionId],
+    references: [kitchenSections.id],
+  }),
+  collection: one(kitchenCollections, {
+    fields: [kitchenImages.collectionId],
+    references: [kitchenCollections.id],
+  })
+}))

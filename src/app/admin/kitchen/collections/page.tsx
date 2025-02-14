@@ -8,13 +8,31 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { updateKitchenCollection } from "@/app/actions/kitchen"
 
 export default function KitchenCollectionsAdminPage() {
-  const { kitchenPage, updateKitchenPage } = useSections()
+  const { kitchenPage } = useSections()
   const [collections, setCollections] = useState(kitchenPage.collections)
 
-  const handleSave = () => {
-    updateKitchenPage({ ...kitchenPage, collections })
+  const handleSave = async () => {
+    for (const collection of collections) {
+      const result = await updateKitchenCollection(collection.id, {
+        title: collection.title,
+        description: collection.description,
+        linkText: collection.link.text,
+        linkUrl: collection.link.url,
+        order: collection.order,
+        images: collection.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      })
+
+      if (result.success) {
+        console.log('Коллекция успешно обновлена')
+      }
+    }
   }
 
   const handleCollectionChange = (index: number, field: string, value: string) => {

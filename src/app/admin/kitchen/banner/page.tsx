@@ -1,27 +1,40 @@
 "use client"
 
 import { useState } from "react"
-import { useSections } from "../../contexts/SectionsContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
+import { updateKitchenBanner } from "@/app/actions/kitchen"
 
 export default function KitchenBannerAdminPage() {
-  const { kitchenPage, updateKitchenPage } = useSections()
-  const [banner, setBanner] = useState(kitchenPage.banner)
+  const [banner, setBanner] = useState({
+    name: "",
+    title: "",
+    description: "",
+    image: "",
+    linkText: "",
+    linkUrl: ""
+  })
 
-  const handleSave = () => {
-    updateKitchenPage({ ...kitchenPage, banner })
+  const handleSave = async () => {
+    const result = await updateKitchenBanner({
+      name: banner.name,
+      title: banner.title,
+      description: banner.description,
+      image: banner.image,
+      linkText: banner.linkText,
+      linkUrl: banner.linkUrl
+    })
+
+    if (result.success) {
+      console.log('Баннер успешно обновлен')
+    }
   }
 
   const handleChange = (field: string, value: string) => {
     setBanner((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleLinkChange = (field: string, value: string) => {
-    setBanner((prev) => ({ ...prev, link: { ...prev.link, [field]: value } }))
   }
 
   return (
@@ -46,11 +59,11 @@ export default function KitchenBannerAdminPage() {
         </div>
         <div>
           <Label htmlFor="linkText">Текст ссылки</Label>
-          <Input id="linkText" value={banner.link.text} onChange={(e) => handleLinkChange("text", e.target.value)} />
+          <Input id="linkText" value={banner.linkText} onChange={(e) => handleChange("linkText", e.target.value)} />
         </div>
         <div>
           <Label htmlFor="linkUrl">URL ссылки</Label>
-          <Input id="linkUrl" value={banner.link.url} onChange={(e) => handleLinkChange("url", e.target.value)} />
+          <Input id="linkUrl" value={banner.linkUrl} onChange={(e) => handleChange("linkUrl", e.target.value)} />
         </div>
         <div>
           <Label>Изображение баннера</Label>

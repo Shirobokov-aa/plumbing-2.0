@@ -1,20 +1,20 @@
 import { db } from "@/db"
-import { bathroomBanner, bathroomSections, bathroomCollections, bathroomImages } from "./schema"
+import { kitchenBanner, kitchenSections, kitchenCollections, kitchenImages } from "./schema"
 import { inArray } from "drizzle-orm"
 
-export async function getBathroomBanner() {
-  const [banner] = await db.select().from(bathroomBanner)
+export async function getKitchenBanner() {
+  const [banner] = await db.select().from(kitchenBanner)
   return banner
 }
 
-export async function getBathroomSections() {
-  const sections = await db.select().from(bathroomSections)
-    .orderBy(bathroomSections.order)
+export async function getKitchenSections() {
+  const sections = await db.select().from(kitchenSections)
+    .orderBy(kitchenSections.order)
 
   const sectionIds = sections.map(section => section.id)
-  const images = await db.select().from(bathroomImages)
-    .where(inArray(bathroomImages.sectionId, sectionIds))
-    .orderBy(bathroomImages.order)
+  const images = await db.select().from(kitchenImages)
+    .where(inArray(kitchenImages.sectionId, sectionIds))
+    .orderBy(kitchenImages.order)
 
   return sections.map(section => ({
     ...section,
@@ -22,14 +22,14 @@ export async function getBathroomSections() {
   }))
 }
 
-export async function getBathroomCollections() {
-  const collections = await db.select().from(bathroomCollections)
-    .orderBy(bathroomCollections.order)
+export async function getKitchenCollections() {
+  const collections = await db.select().from(kitchenCollections)
+    .orderBy(kitchenCollections.order)
 
   const collectionIds = collections.map(collection => collection.id)
-  const images = await db.select().from(bathroomImages)
-    .where(inArray(bathroomImages.collectionId, collectionIds))
-    .orderBy(bathroomImages.order)
+  const images = await db.select().from(kitchenImages)
+    .where(inArray(kitchenImages.collectionId, collectionIds))
+    .orderBy(kitchenImages.order)
 
   return collections.map(collection => ({
     ...collection,
@@ -37,15 +37,13 @@ export async function getBathroomCollections() {
   }))
 }
 
-export async function getBathroomPageData() {
+export async function getKitchenPageData() {
   try {
     const [banner, sections, collections] = await Promise.all([
-      getBathroomBanner(),
-      getBathroomSections(),
-      getBathroomCollections()
-    ]);
-
-    console.log('Loaded bathroom data:', { banner, sections, collections });
+      getKitchenBanner(),
+      getKitchenSections(),
+      getKitchenCollections()
+    ])
 
     return {
       banner: banner ? {
@@ -85,9 +83,9 @@ export async function getBathroomPageData() {
         })),
         order: collection.order || 0
       }))
-    };
+    }
   } catch (error) {
-    console.error('Error getting bathroom page data:', error);
-    throw error;
+    console.error('Error getting kitchen page data:', error)
+    throw error
   }
 }

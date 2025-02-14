@@ -1,8 +1,10 @@
 "use client";
 
 import type React from "react";
-import { createContext, useState, useContext } from "react";
-import { updateMainSection } from "@/app/actions/main-sections";
+import { createContext, useState, useContext, useEffect } from "react";
+import { updateMainSection, getMainSections } from "@/app/actions/main-sections";
+import { getBathroomData } from "@/app/actions/bathroom";
+import { getKitchenData } from "@/app/actions/kitchen";
 
 export interface ImageBlockData {
   src: string;
@@ -164,8 +166,10 @@ interface SectionsContextType {
 
 const SectionsContext = createContext<SectionsContextType | undefined>(undefined);
 
-export function SectionsProvider({ children, initialData }: { children: React.ReactNode, initialData: BathroomPage }) {
-  const [sections, setSections] = useState<SectionsMainPage>({});
+export function SectionsProvider({ children }: { children: React.ReactNode }) {
+  const [sections, setSections] = useState<SectionsMainPage | null>(null);
+  const [bathroomPage, setBathroomPage] = useState<BathroomPage | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [collections, setCollections] = useState<CollectionItem[]>([
     {
       id: 1,
@@ -332,12 +336,6 @@ export function SectionsProvider({ children, initialData }: { children: React.Re
     },
   ]);
 
-  const [bathroomPage, setBathroomPage] = useState(() => ({
-    banner: initialData?.banner || {},
-    sections: initialData?.sections || [],
-    collections: initialData?.collections || []
-  }));
-
   const [kitchenPage, setKitchenPage] = useState<KitchenPage>({
     banner: {
       name: "Кухня",
@@ -402,15 +400,42 @@ export function SectionsProvider({ children, initialData }: { children: React.Re
     ],
   });
 
-  const updateSection = async (sectionKey: string, data: Section) => {
-    const result = await updateMainSection(sectionKey, data);
-    if (result.success) {
-      setSections(prev => ({
-        ...prev,
-        [sectionKey]: data
-      }));
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [mainData, bathroomData, kitchenData] = await Promise.all([
+          getMainSections(),
+          getBathroomData(),
+          getKitchenData()
+        ]);
+
+        setSections(mainData);
+        setBathroomPage(bathroomData);
+        setKitchenPage(kitchenData);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const updateSection = async (sectionKey: string, newData: Section) => {
+    try {
+      const result = await updateMainSection(sectionKey, newData);
+      if (result.success) {
+        setSections(prev => ({
+          ...prev,
+          [sectionKey]: newData
+        }));
+      } else {
+        console.error('Failed to update section:', result.error);
+      }
+    } catch (error) {
+      console.error('Error updating section:', error);
     }
-    return result;
   };
 
   const updateCollections = (newCollections: CollectionItem[]) => {
@@ -432,23 +457,27 @@ export function SectionsProvider({ children, initialData }: { children: React.Re
     setAboutPage(newData);
   };
 
+  const value = {
+    sections,
+    collections,
+    collectionDetails,
+    bathroomPage,
+    kitchenPage,
+    aboutPage,
+    updateSection,
+    updateCollections,
+    updateCollectionDetail,
+    updateBathroomPage,
+    updateKitchenPage,
+    updateAboutPage,
+  };
+
+  if (isLoading) {
+    return <div>Загрузка...</div>;
+  }
+
   return (
-    <SectionsContext.Provider
-      value={{
-        sections,
-        collections,
-        collectionDetails,
-        bathroomPage,
-        kitchenPage,
-        aboutPage,
-        updateSection,
-        updateCollections,
-        updateCollectionDetail,
-        updateBathroomPage,
-        updateKitchenPage,
-        updateAboutPage,
-      }}
-    >
+    <SectionsContext.Provider value={value}>
       {children}
     </SectionsContext.Provider>
   );

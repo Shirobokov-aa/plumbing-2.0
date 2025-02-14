@@ -9,6 +9,7 @@ import {
 } from "@/db/schema"
 import { revalidatePath } from "next/cache"
 import { eq } from "drizzle-orm"
+import { getBathroomPageData } from "@/db/bathroom"
 
 // Баннер
 export async function updateBathroomBanner(data: {
@@ -84,16 +85,21 @@ export async function updateBathroomSection(id: number, data: {
   linkText: string
   linkUrl: string
   order: number
-  images: { src: string; alt: string; order: number }[]
+  images: Array<{
+    src: string
+    alt: string
+    order: number
+  }>
 }) {
   try {
+    // Обновляем секцию
     await db.update(bathroomSections)
       .set({
         title: data.title,
         description: data.description,
         linkText: data.linkText,
         linkUrl: data.linkUrl,
-        order: data.order
+        order: data.order,
       })
       .where(eq(bathroomSections.id, id))
 
@@ -183,16 +189,21 @@ export async function updateBathroomCollection(id: number, data: {
   linkText: string
   linkUrl: string
   order: number
-  images: { src: string; alt: string; order: number }[]
+  images: Array<{
+    src: string
+    alt: string
+    order: number
+  }>
 }) {
   try {
+    // Обновляем коллекцию
     await db.update(bathroomCollections)
       .set({
         title: data.title,
         description: data.description,
         linkText: data.linkText,
         linkUrl: data.linkUrl,
-        order: data.order
+        order: data.order,
       })
       .where(eq(bathroomCollections.id, id))
 
@@ -234,5 +245,15 @@ export async function deleteBathroomCollection(id: number) {
   } catch (error) {
     console.error('Error deleting bathroom collection:', error)
     return { success: false }
+  }
+}
+
+export async function getBathroomData() {
+  try {
+    const data = await getBathroomPageData();
+    return data;
+  } catch (error) {
+    console.error('Error getting bathroom data:', error);
+    throw error;
   }
 }

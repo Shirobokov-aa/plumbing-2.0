@@ -8,13 +8,31 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { updateKitchenSection } from "@/app/actions/kitchen"
 
 export default function KitchenSectionsAdminPage() {
-  const { kitchenPage, updateKitchenPage } = useSections()
+  const { kitchenPage } = useSections()
   const [sections, setSections] = useState(kitchenPage.sections)
 
-  const handleSave = () => {
-    updateKitchenPage({ ...kitchenPage, sections })
+  const handleSave = async () => {
+    for (const section of sections) {
+      const result = await updateKitchenSection(section.id, {
+        title: section.title,
+        description: section.description,
+        linkText: section.link.text,
+        linkUrl: section.link.url,
+        order: section.order,
+        images: section.images.map(img => ({
+          src: img.src,
+          alt: img.alt,
+          order: img.order
+        }))
+      })
+
+      if (result.success) {
+        console.log('Секция успешно обновлена')
+      }
+    }
   }
 
   const handleSectionChange = (index: number, field: string, value: string) => {
