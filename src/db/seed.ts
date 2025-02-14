@@ -13,6 +13,7 @@ import { seedBathroom } from './migrations/0005_bathroom_seed'
 import { kitchenBanner, kitchenSections, kitchenCollections, kitchenImages } from './schema'
 import { aboutBanner, aboutSections } from './schema'
 import { mainSlider } from './schema'
+import { products, productCategories, productImages, productVariants } from "./schema"
 
 // Основной сид для коллекций
 export async function seed() {
@@ -457,7 +458,114 @@ async function seedSliderOnly() {
   }
 }
 
-// Определяем, какой сид запускать на основе аргументов командной строки
+// Функция для заполнения данных каталога
+async function seedCatalog() {
+  try {
+    // Очищаем существующие данные
+    await db.delete(productVariants)
+    await db.delete(productImages)
+    await db.delete(products)
+    await db.delete(productCategories)
+
+    // Создаем категорию
+    const [category] = await db.insert(productCategories).values({
+      name: "Смесители для раковины",
+      slug: "smesiteli-dlya-rakoviny",
+      description: "Коллекция смесителей для раковины",
+      order: 1
+    }).returning()
+
+    // Создаем первый товар
+    const [product1] = await db.insert(products).values({
+      categoryId: category.id,
+      name: "Смеситель для раковины ERA",
+      slug: "smesitel-dlya-rakoviny-era",
+      description: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      article: "172728229829",
+      specifications: {
+        height: "150 мм",
+        width: "200 мм",
+        material: "латунь",
+        coating: "матовое покрытие"
+      },
+      price: 15000,
+      order: 1
+    }).returning()
+
+    // Добавляем изображения для первого товара
+    await db.insert(productImages).values([
+      {
+        productId: product1.id,
+        src: "/images/products/era-black-1.jpg",
+        alt: "Смеситель ERA черный",
+        order: 1
+      },
+      {
+        productId: product1.id,
+        src: "/images/products/era-black-2.jpg",
+        alt: "Смеситель ERA черный",
+        order: 2
+      }
+    ])
+
+    // Добавляем варианты для первого товара
+    await db.insert(productVariants).values([
+      {
+        productId: product1.id,
+        name: "Черный матовый",
+        value: "#000000",
+        available: true
+      },
+      {
+        productId: product1.id,
+        name: "Серебристый",
+        value: "#C0C0C0",
+        available: true
+      },
+      {
+        productId: product1.id,
+        name: "Бронзовый",
+        value: "#967444",
+        available: true
+      }
+    ])
+
+    // Создаем второй товар
+    const [product2] = await db.insert(products).values({
+      categoryId: category.id,
+      name: "Смеситель для раковины NOVA",
+      slug: "smesitel-dlya-rakoviny-nova",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      article: "172728229830",
+      specifications: {
+        height: "180 мм",
+        width: "220 мм",
+        material: "латунь",
+        coating: "глянцевое покрытие"
+      },
+      price: 18000,
+      order: 2
+    }).returning()
+
+    console.log('Catalog seed completed successfully')
+  } catch (error) {
+    console.error('Error seeding catalog data:', error)
+    throw error
+  }
+}
+
+// Функция для запуска только сида каталога
+async function seedCatalogOnly() {
+  try {
+    await seedCatalog()
+    console.log('Catalog seed completed successfully')
+  } catch (error) {
+    console.error('Error during catalog seed:', error)
+    process.exit(1)
+  }
+}
+
+// Обновляем проверку аргументов командной строки
 const args = process.argv.slice(2)
 if (args.includes('--bathroom-only')) {
   seedBathroomOnly()
@@ -467,6 +575,8 @@ if (args.includes('--bathroom-only')) {
   seedAboutOnly()
 } else if (args.includes('--slider-only')) {
   seedSliderOnly()
+} else if (args.includes('--catalog')) { // Добавляем новую проверку
+  seedCatalogOnly()
 } else {
   // Запускаем все сиды
   async function main() {
@@ -477,6 +587,7 @@ if (args.includes('--bathroom-only')) {
       await seedKitchen()
       await seedAbout()
       await seedMainSlider()
+      await seedCatalog() // Добавляем сид каталога в общий запуск
       console.log('All seeds completed successfully')
     } catch (error) {
       console.error('Error during seed:', error)

@@ -2,7 +2,7 @@ import { integer, pgTable, varchar, jsonb, serial, text, timestamp, boolean } fr
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -503,3 +503,77 @@ export const mainSlider = pgTable('main_slider', {
 })
 
 export const mainSliderRelations = relations(mainSlider, ({}) => ({}))
+
+// Категории продуктов
+export const productCategories = pgTable('product_categories', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
+  description: text('description'),
+  order: integer('order').notNull(),
+  createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+// Продукты
+export const products = pgTable('products', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('category_id').references(() => productCategories.id),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
+  description: text('description'),
+  article: text('article'),
+  specifications: jsonb('specifications'),
+  price: integer('price').notNull(),
+  order: integer('order').notNull(),
+  createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp('updated_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+// Изображения продуктов
+export const productImages = pgTable('product_images', {
+  id: serial('id').primaryKey(),
+  productId: integer('product_id').references(() => products.id).notNull(),
+  src: text('src').notNull(),
+  alt: text('alt'),
+  order: integer('order').notNull(),
+  createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+// Варианты продукта (цвета)
+export const productVariants = pgTable('product_variants', {
+  id: serial('id').primaryKey(),
+  productId: integer('product_id').references(() => products.id).notNull(),
+  name: text('name').notNull(),
+  value: text('value').notNull(),
+  available: boolean('available').default(true),
+  createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+// Добавляем relations для products
+export const productsRelations = relations(products, ({ one, many }) => ({
+  category: one(productCategories, {
+    fields: [products.categoryId],
+    references: [productCategories.id],
+  }),
+  images: many(productImages),
+  variants: many(productVariants),
+}))
+
+export const productImagesRelations = relations(productImages, ({ one }) => ({
+  product: one(products, {
+    fields: [productImages.productId],
+    references: [products.id],
+  }),
+}))
+
+export const productVariantsRelations = relations(productVariants, ({ one }) => ({
+  product: one(products, {
+    fields: [productVariants.productId],
+    references: [products.id],
+  }),
+}))
+
+export const productCategoriesRelations = relations(productCategories, ({ many }) => ({
+  products: many(products),
+}))
