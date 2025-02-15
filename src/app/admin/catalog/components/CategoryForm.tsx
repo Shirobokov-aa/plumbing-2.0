@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { createCategory, updateCategory } from "@/app/actions/categories-admin"
-import type { Category } from "@/app/catalog/types"
 
 interface CategoryFormProps {
   category?: Category

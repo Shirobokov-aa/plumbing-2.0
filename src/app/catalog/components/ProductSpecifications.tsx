@@ -1,6 +1,4 @@
-interface ProductSpecificationsProps {
-  specifications: Record<string, any>
-}
+
 
 export function ProductSpecifications({ specifications }: ProductSpecificationsProps) {
   return (

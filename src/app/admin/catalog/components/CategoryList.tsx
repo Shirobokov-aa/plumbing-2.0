@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { deleteCategory } from "@/app/actions/categories-admin"
-import type { Category } from "@/app/catalog/types"
 
 interface CategoryListProps {
   categories: Category[]

@@ -2,20 +2,6 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Link from "next/link";
 
-// Интерфейс для изображений
-interface Image {
-  id: number;
-  src: string;
-  alt: string;
-  desc: string;
-  url: string;
-}
-
-// Пропсы для компонента Collections
-interface CollectionsProps {
-  images: { src: string; alt: string; desc: string; url: string }[]; // Изменили тип данных
-}
-
 export default function Collections({ images }: CollectionsProps) {
   return (
     <div>

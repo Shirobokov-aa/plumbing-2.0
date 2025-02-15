@@ -3,10 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 
-interface ProductFiltersProps {
-  activeFilters: string[]
-  totalProducts: number
-}
 
 const AVAILABLE_FILTERS = [
   { id: 'kitchen', label: 'Смесители для кухни' },

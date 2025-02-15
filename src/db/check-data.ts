@@ -27,7 +27,6 @@ async function checkData() {
     details.forEach(detail => {
       console.log({
         id: detail.id,
-        collectionId: detail.collectionId,
         name: detail.name,
         bannerTitle: detail.bannerTitle,
         bannerImage: detail.bannerImage,
