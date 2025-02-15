@@ -28,7 +28,7 @@ export default function SignIn() {
         router.push(callbackUrl)
         router.refresh()
       }
-    } catch {
+    } catch (error) {
       setError("Произошла ошибка при входе")
     }
   }

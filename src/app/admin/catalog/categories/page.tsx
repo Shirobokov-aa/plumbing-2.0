@@ -15,7 +15,7 @@ export default async function CategoriesPage() {
         </Link>
       </div>
 
-      <CategoryList categories={categories ?? []} />
+      <CategoryList categories={categories} />
     </div>
   )
 }

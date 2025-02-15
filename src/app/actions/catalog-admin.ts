@@ -24,7 +24,18 @@ export async function createCategory(data: {
 }
 
 // Создание продукта
-export async function createProduct(data: Omit<Product, 'id'>) {
+export async function createProduct(data: {
+  categoryId: number
+  name: string
+  slug: string
+  description?: string
+  article?: string
+  specifications?: Record<string, string>
+  price: number
+  order: number
+  images?: { src: string; alt: string; order: number }[]
+  variants?: { name: string; value: string; available: boolean }[]
+}) {
   try {
     const [product] = await db.insert(products).values({
       categoryId: data.categoryId,
@@ -83,10 +94,17 @@ export async function getProductForEdit(id: number) {
 }
 
 // Обновление продукта
-export async function updateProduct(
-  id: number,
-  data: Omit<Product, 'id'> & { categoryId: number | null }
-) {
+export async function updateProduct(id: number, data: {
+  categoryId: number
+  name: string
+  slug: string
+  description?: string
+  article?: string
+  specifications?: Record<string, any>
+  order: number
+  images: { id?: number; src: string; alt?: string; order: number }[]
+  variants: { id?: number; name: string; value: string; available: boolean }[]
+}) {
   try {
     await db.transaction(async (tx) => {
       // Обновляем основные данные продукта

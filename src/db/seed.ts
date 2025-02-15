@@ -531,11 +531,11 @@ async function seedCatalog() {
     ])
 
     // Создаем второй товар
-    await db.insert(products).values({
+    const [product2] = await db.insert(products).values({
       categoryId: category.id,
       name: "Смеситель для раковины NOVA",
       slug: "smesitel-dlya-rakoviny-nova",
-      description: "Lorem ipsum dolor sit amet...",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       article: "172728229830",
       specifications: {
         height: "180 мм",
@@ -545,7 +545,7 @@ async function seedCatalog() {
       },
       price: 18000,
       order: 2
-    })
+    }).returning()
 
     console.log('Catalog seed completed successfully')
   } catch (error) {

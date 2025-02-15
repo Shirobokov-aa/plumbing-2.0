@@ -1,5 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
+
+interface KitchenSectionProps {
+  title: string;
+  description: string;
+  link: { text: string; url: string };
+  images: ImageBlockData[];
+}
 
 export default function KitchenShower({ title, description, link, images }: KitchenSectionProps) {
   return (

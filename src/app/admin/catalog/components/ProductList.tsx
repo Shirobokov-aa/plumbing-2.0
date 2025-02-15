@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Pencil, Trash2 } from "lucide-react"
 import { deleteProduct } from "@/app/actions/catalog-admin"
+import type { Product } from "@/app/catalog/types"
 
 interface ProductListProps {
   products: Product[]

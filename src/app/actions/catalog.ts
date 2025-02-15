@@ -3,7 +3,9 @@
 import { db } from "@/db"
 import { products, productCategories, productImages, productVariants } from "@/db/schema"
 import { revalidatePath } from "next/cache"
-import { eq, sql } from "drizzle-orm"
+import { eq, and, like, sql } from "drizzle-orm"
+
+const ITEMS_PER_PAGE = 6
 
 // Получение категорий
 export async function getCategories (): Promise<Category[]> {
@@ -17,14 +19,12 @@ export async function getCategories (): Promise<Category[]> {
   }
 }
 
-interface GetProductsParams {
+// Получение продуктов
+export async function getProducts({ page = 1, filters = [], search }: {
   page?: number
   filters?: string[]
   search?: string
-}
-
-// Получение продуктов
-export async function getProducts({ page = 1, search }: GetProductsParams) {
+}) {
   try {
     const itemsPerPage = 6
     const offset = (page - 1) * itemsPerPage
@@ -38,7 +38,6 @@ export async function getProducts({ page = 1, search }: GetProductsParams) {
       limit: itemsPerPage,
       offset,
       orderBy: [products.order],
-      where: search ? sql`name ILIKE ${`%${search}%`}` : undefined
     })
 
     const [productsData, totalCount] = await Promise.all([
