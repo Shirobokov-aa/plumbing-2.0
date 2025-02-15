@@ -2,6 +2,12 @@
 
 import Image from "next/image"
 import { useState } from "react"
+import type { ProductImage } from "../types"
+
+interface ProductGalleryProps {
+  images: ProductImage[]
+  productName: string
+}
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0)

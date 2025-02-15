@@ -19,6 +19,49 @@ import CollectionDetailSection2 from "@/components/collection-detail/CollectionD
 import CollectionDetailSection3 from "@/components/collection-detail/CollectionDetailSection3";
 import CollectionDetailSection4 from "@/components/collection-detail/CollectionDetailSection4";
 
+interface CollectionDetail {
+  id: number;
+  name: string;
+  banner: {
+    image: string;
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+  };
+  sections: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections2: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    titleDesc: string;
+    descriptionDesc: string;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections3: Array<{
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections4: Array<{
+    title: string;
+    description: string;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+}
+
+interface CollectionContentProps {
+  id: number;
+}
+
 export function CollectionContent({ id }: CollectionContentProps) {
   const [collection, setCollection] = useState<CollectionDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,16 +113,7 @@ export function CollectionContent({ id }: CollectionContentProps) {
           </Breadcrumb>
         </div>
       </section>
-      <CollectionDetailBanner
-        name={collection.name}
-        image={collection.banner.image || ''}
-        title={collection.banner.title || ''}
-        description={collection.banner.description || ''}
-        link={collection.banner.link.text && collection.banner.link.url ? {
-          text: collection.banner.link.text,
-          url: collection.banner.link.url
-        } : { text: '', url: '' }}
-      />
+      <CollectionDetailBanner {...collection.banner} name={collection.name} />
       {collection.sections?.map((section, index) => (
         <CollectionDetailSection
           key={index}
@@ -94,6 +128,7 @@ export function CollectionContent({ id }: CollectionContentProps) {
           key={index}
           {...section}
           linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
         />
       ))}
       {collection.sections3?.map((section, index) => (
@@ -101,12 +136,15 @@ export function CollectionContent({ id }: CollectionContentProps) {
           key={index}
           {...section}
           linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
         />
       ))}
       {collection.sections4?.map((section, index) => (
         <CollectionDetailSection4
           key={index}
           {...section}
+          linkUrl={section.linkUrl || '#'}
+          reverse={index % 2 !== 0}
         />
       ))}
     </>

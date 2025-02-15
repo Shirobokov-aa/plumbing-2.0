@@ -4,9 +4,13 @@ import Link from "next/link"
 import { Search, Menu, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import HoverMenu from "./HoverMenu"
+// import { useSections } from "@/app/admin/contexts/SectionsContext"
 import { getCollections } from "@/app/actions/collections"
 
-
+interface HeaderProps {
+  defaultTextColor?: string
+  activeTextColor?: string
+}
 
 export default function Header({ defaultTextColor = "text-white", activeTextColor = "text-black" }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(true)
@@ -16,6 +20,8 @@ export default function Header({ defaultTextColor = "text-white", activeTextColo
   const [isMenuLocked, setIsMenuLocked] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [collections, setCollections] = useState<Array<{ name: string; id: number }>>([])
+
+  // const { collectionDetails } = useSections()
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -27,7 +33,7 @@ export default function Header({ defaultTextColor = "text-white", activeTextColo
     fetchCollections()
   }, [])
 
-  const categories: MenuCategory[] = [
+  const categories = [
     {
       name: "Ванная",
       subcategories: [

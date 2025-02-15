@@ -12,7 +12,7 @@ export default async function AboutPage() {
     <div>
       <Header defaultTextColor="text-black" activeTextColor="text-black" />
       <Suspense fallback={<div>Loading...</div>}>
-        <AboutContent data={aboutData as AboutPageData} />
+        <AboutContent data={aboutData} />
       </Suspense>
       <Footer />
     </div>

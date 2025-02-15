@@ -1,9 +1,24 @@
-
+// import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
 import ImageBlock from "./blocks/image-block";
 
+interface SubCategory {
+  name: string;
+  href: string;
+}
 
+interface Category {
+  name: string;
+  subcategories: SubCategory[];
+  images: string[];
+}
+
+interface HoverMenuProps {
+  category: Category;
+  isVisible: boolean;
+  onClose: () => void;
+}
 
 export default function HoverMenu({ category, isVisible, onClose }: HoverMenuProps) {
   if (!isVisible) return null;

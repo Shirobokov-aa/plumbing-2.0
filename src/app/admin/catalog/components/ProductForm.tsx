@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { createProduct, updateProduct } from "@/app/actions/catalog-admin"
+import type { Product, Category } from "@/app/catalog/types"
 import { ProductSpecifications } from "./ProductSpecifications"
-import Image from "next/image"
 
 interface ProductFormProps {
   categories: Category[]
@@ -19,19 +19,17 @@ interface ProductFormProps {
 export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<Omit<Product, 'id'>>({
-    categoryId: product?.categoryId || categories[0]?.id || null,
+  const [formData, setFormData] = useState({
+    categoryId: product?.categoryId || categories[0]?.id || 0,
     name: product?.name || '',
     slug: product?.slug || '',
-    description: product?.description || null,
-    article: product?.article || null,
+    description: product?.description || '',
+    article: product?.article || '',
     specifications: product?.specifications || {},
     order: product?.order || 0,
     images: product?.images || [],
     variants: product?.variants || [],
-    price: product?.price || 0,
-    createdAt: product?.createdAt || null,
-    updatedAt: product?.updatedAt || null
+    price: product?.price || 0
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,15 +56,12 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      const tempImage: ProductImage = {
-        id: -Date.now(), // Временный отрицательный ID
-        src: '/temporary-url',
-        order: formData.images.length,
-      }
-
+      // Здесь должна быть логика загрузки изображения на сервер
+      // и получения URL загруженного файла
+      const imageUrl = '/temporary-url' // Замените на реальную загрузку
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, tempImage]
+        images: [...prev.images, { src: imageUrl, order: prev.images.length }]
       }))
     }
   }
@@ -77,7 +72,7 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
         <Label htmlFor="category">Категория</Label>
         <select
           id="category"
-          value={formData.categoryId || ''}
+          value={formData.categoryId}
           onChange={(e) => setFormData(prev => ({ ...prev, categoryId: Number(e.target.value) }))}
           className="w-full p-2 border rounded"
         >
@@ -113,7 +108,7 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
         <Label htmlFor="article">Артикул</Label>
         <Input
           id="article"
-          value={formData.article || ''}
+          value={formData.article}
           onChange={(e) => setFormData(prev => ({ ...prev, article: e.target.value }))}
         />
       </div>
@@ -122,7 +117,7 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
         <Label htmlFor="description">Описание</Label>
         <Textarea
           id="description"
-          value={formData.description || ''}
+          value={formData.description}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
         />
       </div>
@@ -159,11 +154,10 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
         <div className="grid grid-cols-4 gap-4 mt-2">
           {formData.images.map((image, index) => (
             <div key={index} className="relative aspect-square">
-              <Image
+              <img
                 src={image.src}
                 alt=""
-                fill
-                className="object-cover rounded"
+                className="object-cover w-full h-full rounded"
               />
               <button
                 type="button"

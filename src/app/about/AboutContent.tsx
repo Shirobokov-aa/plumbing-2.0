@@ -11,6 +11,25 @@ import { Slash } from "lucide-react";
 import AboutBanner from "@/components/about/AboutBanner";
 import AboutShower from "@/components/about/AboutShower";
 
+interface AboutPageData {
+  banner: {
+    name: string;
+    image: string;
+    title: string;
+    description: string;
+    link: {
+      text: string;
+      url: string;
+    };
+  };
+  sections: Array<{
+    id: number;
+    title: string;
+    description: string;
+    order: number;
+  }>;
+}
+
 interface AboutContentProps {
   data: AboutPageData;
 }

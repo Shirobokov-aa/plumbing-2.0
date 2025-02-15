@@ -1,6 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import type { ProductVariant } from "../types"
+
+interface ProductVariantsProps {
+  variants: ProductVariant[]
+  onSelect?: (variant: ProductVariant) => void
+}
 
 export function ProductVariants({ variants, onSelect }: ProductVariantsProps) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)

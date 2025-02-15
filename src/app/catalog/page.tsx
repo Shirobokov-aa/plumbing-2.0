@@ -1,5 +1,6 @@
-import { getProducts } from "@/app/actions/catalog";
+import { getCategories, getProducts } from "@/app/actions/catalog";
 import { ProductGrid } from "./components/ProductGrid";
+import { CategoryFilter } from "./components/CategoryFilter";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CatalogBanner from "./components/CatalogBanner";
@@ -31,7 +32,6 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       <Header defaultTextColor="text-black" activeTextColor="text-black" />
       <div className="container mx-auto px-4 py-8">
         <CatalogBanner
-          name="Ванная комната"
           image="/images/catalog/banner.jpg"
           title="Ванная"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
@@ -51,13 +51,12 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           </Suspense>
         </div>
 
-        <ProductGrid
-          products={products as unknown as Product[]}
-        />
+        <ProductGrid products={products} />
 
         {currentPage < totalPages && (
           <LoadMore
             currentPage={currentPage}
+            totalPages={totalPages}
             totalItems={totalCount}
             itemsPerPage={6}
           />
