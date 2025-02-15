@@ -5,6 +5,11 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 
+interface ProductSpecificationsProps {
+  specifications: Record<string, string>
+  onChange: (specs: Record<string, string>) => void
+}
+
 export function ProductSpecifications({ specifications, onChange }: ProductSpecificationsProps) {
   const [specs, setSpecs] = useState<Record<string, string>>(specifications || {})
 

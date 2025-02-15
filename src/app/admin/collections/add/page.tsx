@@ -13,16 +13,11 @@ import { addCollectionPreview } from "@/app/actions/collections"
 
 export default function AddCollectionAdmin() {
   const router = useRouter()
-  const [preview, setPreview] = useState<{
-    image: string
-    title: string
-    desc: string
-    flexDirection: "xl:flex-row" | "xl:flex-row-reverse"
-  }>({
+  const [preview, setPreview] = useState({
     image: "",
     title: "",
     desc: "",
-    flexDirection: "xl:flex-row"
+    flexDirection: "xl:flex-row" as const
   })
 
   const handleSubmit = async (e: React.FormEvent) => {

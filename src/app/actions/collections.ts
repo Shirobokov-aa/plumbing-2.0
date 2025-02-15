@@ -10,11 +10,19 @@ import {
   getAllCollectionPreviews,
   getCollectionPreviewById
 } from '@/db/collections'
+import type { CollectionItem } from '../admin/contexts/SectionsContext'
 import { insertCollectionSchema, insertPreviewSchema, collectionPreviews, collectionDetails, collectionSections1, collectionSections2, collectionSections3, collectionSections4 } from '@/db/schema'
 import type { NewCollectionPreview } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { getAllCollectionDetails } from "@/db/collection-details"
+
+// interface Banner {
+//   image: string;
+//   title: string;
+//   description: string;
+//   link: { text: string; url: string };
+// }
 
 // Получение всех коллекций для превью
 export async function getCollectionPreviews() {
@@ -251,7 +259,7 @@ export async function deleteCollectionPreview(id: number) {
 }
 
 // Добавьте новую функцию
-export async function updateAllCollectionLinks(): Promise<void> {
+export async function updateAllCollectionLinks() {
   try {
     const previews = await getAllCollectionPreviews()
 
@@ -262,7 +270,12 @@ export async function updateAllCollectionLinks(): Promise<void> {
     }
 
     revalidatePath('/collections')
+    return { success: true }
   } catch (error) {
     console.error('Error updating collection links:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Ошибка при обновлении ссылок'
+    }
   }
 }

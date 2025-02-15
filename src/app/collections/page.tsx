@@ -4,6 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCollectionPreviews } from "@/app/actions/collections";
 
+// interface CollectionItem {
+//   id: number;
+//   image: string;
+//   title: string;
+//   desc: string;
+//   link: string;
+//   flexDirection: "xl:flex-row" | "xl:flex-row-reverse";
+// }
+
 export default async function Collections() {
   const { collections: collectionsData } = await getCollectionPreviews();
 

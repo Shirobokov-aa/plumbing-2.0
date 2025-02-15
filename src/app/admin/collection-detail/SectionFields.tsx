@@ -9,10 +9,45 @@ import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import { Control } from "react-hook-form"
 
+interface FormData {
+  sections1: Array<{
+    title: string;
+    description: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections2: Array<{
+    title: string;
+    description: string;
+    titleDesc?: string;
+    descriptionDesc?: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections3: Array<{
+    title: string;
+    description: string;
+    linkText?: string;
+    linkUrl?: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+  sections4: Array<{
+    title: string;
+    description: string;
+    order: number;
+    images: Array<{ src: string; alt: string; order: number }>;
+  }>;
+}
+
 type SectionFieldsProps = {
   type: "section1" | "section2" | "section3" | "section4"
   index: number
-  control: Control<CollectionDetailInput>
+  control: Control<FormData>
   remove: () => void
 }
 
@@ -140,6 +175,7 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
         <ImageUpload
           name={`${fieldName}.${index}.images` as `${typeof fieldName}.${number}.images`}
           control={control}
+          label="Изображения секции"
         />
       </CardContent>
     </Card>

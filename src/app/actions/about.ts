@@ -5,7 +5,7 @@ import { aboutBanner, aboutSections } from "@/db/schema"
 import { revalidatePath } from "next/cache"
 import { eq } from "drizzle-orm"
 
-export async function getAboutPageData(): Promise<AboutPageData> {
+export async function getAboutPageData() {
   try {
     const [banner] = await db.select().from(aboutBanner)
     const sections = await db.select().from(aboutSections).orderBy(aboutSections.order)

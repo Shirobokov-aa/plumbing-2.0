@@ -5,6 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSlides } from "@/app/actions/slider";
 
+interface Slide {
+  id: number;
+  desktopImage: string;
+  mobileImage: string;
+  title: string;
+  linkUrl: string;
+  order: number;
+}
+
 const SLIDE_DURATION = 4000;
 
 export function BannerSlider() {

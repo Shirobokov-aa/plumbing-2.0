@@ -6,6 +6,37 @@ import { mainSections, mainSectionImages } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
+interface ImageBlockData {
+  src: string
+  alt?: string
+  desc?: string
+  url?: string
+}
+
+interface SectionData {
+  title?: string
+  description?: string
+  link?: {
+    name?: string
+    url?: string
+  }
+  images?: string[]
+  images_block?: ImageBlockData[]
+}
+
+interface FormattedSection {
+  [key: string]: {
+    title?: string
+    description?: string
+    link?: {
+      name?: string
+      url?: string
+    }
+    images?: string[]
+    images_block?: ImageBlockData[]
+  }
+}
+
 // Получение всех секций с изображениями
 export async function getMainSections(): Promise<FormattedSection> {
   try {

@@ -88,7 +88,7 @@ export async function createSectionImage(data: NewSectionImage): Promise<Section
 }
 
 // Получить все секции и изображения для детальной страницы
-export async function getCollectionDetailWithSections(id: number): Promise<CollectionDetailData | null> {
+export async function getCollectionDetailWithSections(id: number) {
   const [detail] = await db.select().from(collectionDetails)
     .where(eq(collectionDetails.id, id));
 
@@ -104,72 +104,37 @@ export async function getCollectionDetailWithSections(id: number): Promise<Colle
     .where(eq(collectionSections4.collectionDetailId, id));
 
   // Получаем изображения для каждой секции
-  const sectionImages = await db.select().from(collectionSectionImages)
-    .where(eq(collectionSectionImages.sectionId, id));
+  const images = await db.select().from(collectionSectionImages);
+
+  // Формируем объект для баннера
+  const banner = {
+    image: detail.bannerImage,
+    title: detail.bannerTitle,
+    description: detail.bannerDescription,
+    link: {
+      text: detail.bannerLinkText || '',
+      url: detail.bannerLinkUrl || ''
+    }
+  };
 
   return {
-    id: detail.id,
-    name: detail.name,
-    bannerImage: detail.bannerImage || null,
-    bannerTitle: detail.bannerTitle || null,
-    bannerDescription: detail.bannerDescription || null,
-    bannerLinkText: detail.bannerLinkText || null,
-    bannerLinkUrl: detail.bannerLinkUrl || null,
+    ...detail,
+    banner,
     sections1: sections1.map(s => ({
-      title: s.title,
-      description: s.description,
-      linkText: s.linkText || undefined,
-      linkUrl: s.linkUrl || undefined,
-      order: s.order,
-      images: sectionImages
-        .filter(img => img.sectionId === s.id)
-        .map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
+      ...s,
+      images: images.filter(i => i.sectionId === s.id && i.sectionType === 'section1')
     })),
     sections2: sections2.map(s => ({
-      title: s.title,
-      description: s.description,
-      linkText: s.linkText || undefined,
-      linkUrl: s.linkUrl || undefined,
-      titleDesc: s.titleDesc || '',
-      descriptionDesc: s.descriptionDesc || '',
-      order: s.order,
-      images: sectionImages
-        .filter(img => img.sectionId === s.id)
-        .map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
+      ...s,
+      images: images.filter(i => i.sectionId === s.id && i.sectionType === 'section2')
     })),
     sections3: sections3.map(s => ({
-      title: s.title,
-      description: s.description,
-      linkText: s.linkText || undefined,
-      linkUrl: s.linkUrl || undefined,
-      order: s.order,
-      images: sectionImages
-        .filter(img => img.sectionId === s.id)
-        .map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
+      ...s,
+      images: images.filter(i => i.sectionId === s.id && i.sectionType === 'section3')
     })),
     sections4: sections4.map(s => ({
-      title: s.title,
-      description: s.description,
-      order: s.order,
-      images: sectionImages
-        .filter(img => img.sectionId === s.id)
-        .map(img => ({
-          src: img.src,
-          alt: img.alt,
-          order: img.order
-        }))
+      ...s,
+      images: images.filter(i => i.sectionId === s.id && i.sectionType === 'section4')
     })),
   };
 }

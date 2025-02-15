@@ -6,15 +6,169 @@ import { updateMainSection, getMainSections } from "@/app/actions/main-sections"
 import { getBathroomData } from "@/app/actions/bathroom";
 import { getKitchenData } from "@/app/actions/kitchen";
 
+export interface ImageBlockData {
+  src: string;
+  alt?: string;
+  desc?: string;
+  url?: string;
+}
+
+interface Section {
+  title?: string;
+  description?: string;
+  link?: {
+    name?: string;
+    url?: string;
+  };
+  images_block?: ImageBlockData[];
+  images?: string[];
+}
+
+interface SectionsMainPage {
+  [key: string]: Section;
+}
+
+interface BathroomSection {
+  title: string;
+  description: string;
+  link: { text: string; url: string };
+  images: ImageBlockData[];
+}
+
+interface KitchenSection {
+  title: string;
+  description: string;
+  link: { text: string; url: string };
+  images: ImageBlockData[];
+}
+interface AboutSection {
+  title: string;
+  description: string;
+  // link: { text: string; url: string };
+  // images: ImageBlockData[];
+}
+
+interface BathroomPage {
+  banner: {
+    name: string;
+    image: string;
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+  };
+  sections: BathroomSection[];
+  collections: BathroomCollection[];
+}
+
+interface KitchenPage {
+  banner: {
+    name: string;
+    image: string;
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+  };
+  sections: KitchenSection[];
+  collections: KitchenCollection[];
+}
+
+interface AboutPage {
+  banner: {
+    name: string;
+    image: string;
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+  };
+  sections: AboutSection[];
+  // collections: KitchenCollection[]
+}
+
+export interface BathroomCollection {
+  id: number;
+  title: string;
+  description: string;
+  link: {
+    text: string;
+    url: string;
+  };
+  images: ImageBlockData[];
+  order?: number;
+}
+
+interface KitchenCollection {
+  title: string;
+  description: string;
+  link: { text: string; url: string };
+  images: ImageBlockData[];
+}
+
+export interface CollectionItem {
+  id: number; // Убедимся, что id имеет тип number
+  image: string;
+  title: string;
+  desc: string;
+  link: string;
+  flexDirection: "xl:flex-row" | "xl:flex-row-reverse";
+}
+
+export interface CollectionDetail {
+  id: number;
+  name: string;
+  banner: {
+    image: string;
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+  };
+  sections: {
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+    images: ImageBlockData[];
+  }[];
+  sections2: {
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+    images: ImageBlockData[];
+    titleDesc: string;
+    descriptionDesc: string;
+  }[];
+  sections3: {
+    title: string;
+    description: string;
+    link: { text: string; url: string };
+    images: ImageBlockData[];
+  }[];
+  sections4: {
+    title: string;
+    description: string;
+    // link: { text: string; url: string };
+    images: ImageBlockData[];
+  }[];
+}
+
+interface SectionsContextType {
+  sections: SectionsMainPage;
+  collections: CollectionItem[];
+  collectionDetails: CollectionDetail[];
+  bathroomPage: BathroomPage;
+  kitchenPage: KitchenPage;
+  aboutPage: AboutPage;
+  updateSection: (sectionKey: string, newData: Section) => void;
+  updateCollections: (newCollections: CollectionItem[]) => void;
+  updateCollectionDetail: (id: number, newData: CollectionDetail) => void;
+  updateBathroomPage: (data: BathroomPage) => void;
+  updateKitchenPage: (newData: KitchenPage) => void;
+  updateAboutPage: (newData: AboutPage) => void;
+}
+
 const SectionsContext = createContext<SectionsContextType | undefined>(undefined);
 
-export function SectionsProvider({ children, initialData }: SectionsProviderProps) {
+export function SectionsProvider({ children }: { children: React.ReactNode }) {
   const [sections, setSections] = useState<SectionsMainPage | null>(null);
-  const [bathroomPage, setBathroomPage] = useState<BathroomPage>({
-    banner: initialData.banner,
-    sections: initialData.sections,
-    collections: initialData.collections
-  });
+  const [bathroomPage, setBathroomPage] = useState<BathroomPage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [collections, setCollections] = useState<CollectionItem[]>([
     {
@@ -42,98 +196,45 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
       flexDirection: "xl:flex-row",
     },
   ]);
-  const [collectionDetails, setCollectionDetails] = useState<CollectionDetailData[]>([
+  const [collectionDetails, setCollectionDetails] = useState<CollectionDetail[]>([
     {
       id: 1,
       name: "sono",
-      bannerImage: "/img/banner01.png",
-      bannerTitle: "Заголовок баннера",
-      bannerDescription: "Описание баннера",
-      bannerLinkText: "Какой-то текст",
-      bannerLinkUrl: "/",
-      sections1: [
-        {
-          title: "Смесители для раковины",
-          description: "Our blog covers a wide range of topics...",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          order: 1,
-          images: [
-            { src: "/img/item01.png", alt: "Смеситель SONO 1", order: 1 },
-            { src: "/img/item02.png", alt: "Смеситель SONO 2", order: 2 },
-            { src: "/img/item02.png", alt: "Смеситель SONO 2", order: 3 }
-          ]
-        }
-      ],
-      sections2: [
-        {
-          title: "Смесители для раковины",
-          description: "Our blog covers...",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          titleDesc: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ И ДУША",
-          descriptionDesc: "A Chic Urban Apartment Trasformation",
-          order: 1,
-          images: [
-            { src: "/img/item01.png", alt: "Смеситель SONO 1", order: 1 }
-          ]
-        }
-      ],
-      sections3: [
-        {
-          title: "Унитазы",
-          description: "Welcome to Aesthetics & Co....",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          order: 1,
-          images: [
-            { src: "/img/item10.png", alt: "Смеситель SONO 1", order: 1 }
-          ]
-        }
-      ],
-      sections4: [
-        {
-          title: "Унитазы",
-          description: "Welcome to Aesthetics & Co....",
-          order: 1,
-          images: [
-            { src: "/img/item10.png", alt: "Смеситель SONO 1", order: 1 },
-            { src: "/img/item10.png", alt: "Смеситель SONO 1", order: 2 },
-            { src: "/img/item10.png", alt: "Смеситель SONO 1", order: 3 }
-          ]
-        }
-      ]
-    },
-    {
-      id: 2,
-      name: "era",
-      bannerImage: "/img/banner01.png",
-      bannerTitle: "Заголовок баннера",
-      bannerDescription: "Описание баннера",
-      bannerLinkText: "Какой-то текст",
-      bannerLinkUrl: "/",
-      sections1: [
+      banner: {
+        image: "/img/banner01.png",
+        title: "Заголовок баннера",
+        description: "Описание баннера",
+        link: { text: "Какой-то текст", url: "/" },
+      },
+      sections: [
         {
           title: "Смесители для раковины",
           description:
             "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          images: [],
-          order: 1,
+          link: { text: "Посмотреть", url: "/" },
+          images: [
+            { src: "/img/item01.png", alt: "Смеситель SONO 1" },
+            { src: "/img/item02.png", alt: "Смеситель SONO 2" },
+            { src: "/img/item02.png", alt: "Смеситель SONO 2" },
+          ],
         },
         {
           title: "Смесители для ванной и душа",
           description:
             "Step into the world of Aesthetics & Co. through our portfolio of past projects. Each project...",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          order: 1,
+          link: { text: "Посмотреть", url: "/" },
           images: [
             {
-              src: "/img/fallback-image.png",
+              src: "/img/item-era.png",
               alt: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ И ДУША",
-              order: 1
+            },
+            {
+              src: "/img/item-era.png",
+              alt: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ И ДУША",
+            },
+            {
+              src: "/img/item-era.png",
+              alt: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ И ДУША",
             },
           ],
         },
@@ -143,23 +244,19 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
           title: "Смесители для раковины",
           description:
             "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          images: [{ src: "/img/item01.png", alt: "Смеситель SONO 1", order: 1 }],
+          link: { text: "Посмотреть", url: "/" },
+          images: [{ src: "/img/item01.png", alt: "Смеситель SONO 1" }],
           titleDesc: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ  И  ДУША",
           descriptionDesc: "A Chic Urban Apartment Trasformation",
-          order: 1,
         },
       ],
       sections3: [
         {
-          title: "Смесители для раковины",
+          title: "Унитазы",
           description:
-            "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
-          linkText: "Посмотреть",
-          linkUrl: "/",
-          images: [{ src: "/img/item01.png", alt: "Смеситель SONO 1", order: 1 }],
-          order: 1,
+            "Welcome to Aesthetics & Co., where we believe in the power of exceptional design to transform spaces and enhance lives. ",
+          link: { text: "Посмотреть", url: "/" },
+          images: [{ src: "/img/item10.png", alt: "Смеситель SONO 1" }],
         },
       ],
       sections4: [
@@ -167,8 +264,73 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
           title: "Унитазы",
           description:
             "Welcome to Aesthetics & Co., where we believe in the power of exceptional design to transform spaces and enhance lives. ",
-          order: 1,
-          images: [{ src: "/img/item10.png", alt: "Смеситель SONO 1", order: 1 }],
+          // link: { text: "Посмотреть", url: "/" },
+          images: [
+            { src: "/img/item10.png", alt: "Смеситель SONO 1" },
+            { src: "/img/item10.png", alt: "Смеситель SONO 1" },
+            { src: "/img/item10.png", alt: "Смеситель SONO 1" },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "era",
+      banner: {
+        image: "/img/banner01.png",
+        title: "Заголовок баннера",
+        description: "Описание баннера",
+        link: { text: "Какой-то текст", url: "/" },
+      },
+      sections: [
+        {
+          title: "Смесители для раковины",
+          description:
+            "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
+          link: { text: "Посмотреть", url: "/" },
+          images: [],
+        },
+        {
+          title: "Смесители для ванной и душа",
+          description:
+            "Step into the world of Aesthetics & Co. through our portfolio of past projects. Each project...",
+          link: { text: "Посмотреть", url: "/" },
+          images: [
+            {
+              src: "/img/fallback-image.png",
+              alt: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ И ДУША",
+              desc: "A Chic Urban Apartment Trasformation",
+            },
+          ],
+        },
+      ],
+      sections2: [
+        {
+          title: "Смесители для раковины",
+          description:
+            "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
+          link: { text: "Посмотреть", url: "/" },
+          images: [{ src: "/img/item01.png", alt: "Смеситель SONO 1" }],
+          titleDesc: "СМЕСИТЕЛЬ ДЛЯ ВАННЫ  И  ДУША",
+          descriptionDesc: "A Chic Urban Apartment Trasformation",
+        },
+      ],
+      sections3: [
+        {
+          title: "Смесители для раковины",
+          description:
+            "Our blog covers a wide range of topics, including design inspiration, practical advice for home improvement recommendations and more.",
+          link: { text: "Посмотреть", url: "/" },
+          images: [{ src: "/img/item01.png", alt: "Смеситель SONO 1" }],
+        },
+      ],
+      sections4: [
+        {
+          title: "Унитазы",
+          description:
+            "Welcome to Aesthetics & Co., where we believe in the power of exceptional design to transform spaces and enhance lives. ",
+          // link: { text: "Посмотреть", url: "/" },
+          images: [{ src: "/img/item10.png", alt: "Смеситель SONO 1" }],
         },
       ],
     },
@@ -184,27 +346,23 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
     },
     sections: [
       {
-        id: 1,
         title: "Смесители для кухни",
         description: "Комфорт, качество и элегантность для вашей ванной комнаты",
         link: { text: "Смотреть", url: "/kitchen/faucets" },
-        order: 1,
         images: [
-          { src: "", alt: "Смеситель для кухни 1", order: 1 },
-          { src: "", alt: "Смеситель для кухни 2", order: 2 },
-          { src: "", alt: "Смеситель для кухни 3", order: 3 },
+          { src: "", alt: "Смеситель для кухни 1" },
+          { src: "", alt: "Смеситель для кухни 2" },
+          { src: "", alt: "Смеситель для кухни 3" },
         ],
       },
       {
-        id: 2,
         title: "Аксессуары",
         description: "Детали, которые добавляют удобство и стиль.",
         link: { text: "Смотреть", url: "/kitchen/faucets" },
-        order: 2,
         images: [
-          { src: "", alt: "Смеситель для кухни 1", order: 1 },
-          { src: "", alt: "Смеситель для кухни 2", order: 2 },
-          { src: "", alt: "Смеситель для кухни 3", order: 3 },
+          { src: "", alt: "Смеситель для кухни 1" },
+          { src: "", alt: "Смеситель для кухни 2" },
+          { src: "", alt: "Смеситель для кухни 3" },
         ],
       },
       // Добавьте другие секции по необходимости
@@ -212,15 +370,13 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
     collections: [
       // Добавляем новые данные для коллекций
       {
-        id: 1,
         title: "Коллекция для кухни",
         description: "Элегантность и функциональность в каждой детали",
         link: { text: "Подробнее", url: "/kitchen/collections/1" },
-        order: 1,
         images: [
-          { src: "/img/item01.png", alt: "Коллекция для ванной 1", order: 1 },
-          { src: "/img/item02.png", alt: "Коллекция для ванной 2", order: 2 },
-          { src: "/img/item03.png", alt: "Коллекция для ванной 3", order: 3 }
+          { src: "/img/item01.png", alt: "Коллекция для ванной 1" },
+          { src: "/img/item02.png", alt: "Коллекция для ванной 2" },
+          { src: "/img/item03.png", alt: "Коллекция для ванной 3" },
         ],
       },
       // Добавьте дополнительные коллекции по необходимости
@@ -254,55 +410,8 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
         ]);
 
         setSections(mainData);
-        if (bathroomData.banner) {
-          setBathroomPage({
-            banner: {
-              name: bathroomData.banner.name || "",
-              image: bathroomData.banner.image || "",
-              title: bathroomData.banner.title || "",
-              description: bathroomData.banner.description || "",
-              linkText: bathroomData.banner.linkText || "",
-              linkUrl: bathroomData.banner.linkUrl || "",
-              id: bathroomData.banner.id || 1,
-              createdAt: bathroomData.banner.createdAt || null,
-              updatedAt: bathroomData.banner.updatedAt || null
-            },
-            sections: bathroomData.sections.map(section => ({
-              id: section.id,
-              title: section.title,
-              description: section.description,
-              linkText: section.link.text,
-              linkUrl: section.link.url,
-              order: section.order,
-              createdAt: null,
-              updatedAt: null,
-              images: section.images.map((img, index) => ({
-                id: index + 1,
-                src: img.src,
-                alt: img.alt,
-                order: img.order,
-                sectionId: null,
-                collectionId: null,
-                createdAt: null,
-                updatedAt: null
-              }))
-            })),
-            collections: bathroomData.collections
-          });
-        }
-        if (kitchenData.banner) {
-          setKitchenPage({
-            banner: {
-              name: kitchenData.banner.name || "",
-              image: kitchenData.banner.image || "",
-              title: kitchenData.banner.title || "",
-              description: kitchenData.banner.description || "",
-              link: kitchenData.banner.link
-            },
-            sections: kitchenData.sections,
-            collections: kitchenData.collections
-          });
-        }
+        setBathroomPage(bathroomData);
+        setKitchenPage(kitchenData);
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
@@ -333,7 +442,7 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
     setCollections(newCollections);
   };
 
-  const updateCollectionDetail = (id: number, newData: CollectionDetailData) => {
+  const updateCollectionDetail = (id: number, newData: CollectionDetail) => {
     setCollectionDetails((prevDetails) => prevDetails.map((detail) => (detail.id === id ? newData : detail)));
   };
 
@@ -355,7 +464,6 @@ export function SectionsProvider({ children, initialData }: SectionsProviderProp
     bathroomPage,
     kitchenPage,
     aboutPage,
-    isLoading,
     updateSection,
     updateCollections,
     updateCollectionDetail,

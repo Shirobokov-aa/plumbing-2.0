@@ -2,6 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import type { Category } from "../types"
+
+interface CategoryFilterProps {
+  categories: Category[]
+}
 
 export function CategoryFilter({ categories }: CategoryFilterProps) {
   const router = useRouter()

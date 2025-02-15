@@ -3,6 +3,7 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import KitchenContent from "./KitchenContent"
 
+// { params }: { params: Promise<{ name: string }> }
 export default function Kitchen() {
   return (
     <div>
