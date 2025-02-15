@@ -23,7 +23,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Редактировать товар</h1>
       <ProductForm
-        product={product}
+        product={product as Product}
         categories={categories}
         isEdit
       />

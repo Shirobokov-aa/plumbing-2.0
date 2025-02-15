@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 // import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
 
-interface SectionProps {
+interface CollectionSection1Props {
   title: string;
   description: string;
   linkText?: string;
@@ -11,7 +11,7 @@ interface SectionProps {
   reverse?: boolean;
 }
 
-export default function CollectionDetailSection({ title, description, linkText, linkUrl = '#', images, reverse }: SectionProps) {
+export default function CollectionDetailSection({ title, description, linkText, linkUrl, images, reverse }: CollectionSection1Props) {
   return (
     <section>
       <div className="max-w-1440 mx-auto lg:px-24 px-5 pt-48">
@@ -22,9 +22,11 @@ export default function CollectionDetailSection({ title, description, linkText, 
               <p className="lg:text-desc pt-[45px]">{description}</p>
             </div>
             <div className="xl:pt-0 pt-11">
-              <Link href={linkUrl} className="text-desc border-b">
-                {linkText}
-              </Link>
+              {linkUrl && linkText && (
+                <Link href={linkUrl} className="text-desc border-b">
+                  {linkText}
+                </Link>
+              )}
             </div>
           </div>
           <div className="flex gap-5">

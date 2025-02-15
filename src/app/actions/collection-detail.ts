@@ -30,46 +30,6 @@ import {
   collectionSectionImages
 } from "@/db/schema"
 
-type CollectionDetailInput = {
-  name: string;
-  bannerImage: string;
-  bannerTitle: string;
-  bannerDescription: string;
-  bannerLinkText: string;
-  bannerLinkUrl: string;
-  sections1: Array<{
-    title: string;
-    description: string;
-    linkText: string;
-    linkUrl: string;
-    order: number;
-    images: Array<{ src: string; alt: string; order: number }>;
-  }>;
-  sections2: Array<{
-    title: string;
-    description: string;
-    linkText: string;
-    linkUrl: string;
-    titleDesc: string;
-    descriptionDesc: string;
-    order: number;
-    images: Array<{ src: string; alt: string; order: number }>;
-  }>;
-  sections3: Array<{
-    title: string;
-    description: string;
-    linkText: string;
-    linkUrl: string;
-    order: number;
-    images: Array<{ src: string; alt: string; order: number }>;
-  }>;
-  sections4: Array<{
-    title: string;
-    description: string;
-    order: number;
-    images: Array<{ src: string; alt: string; order: number }>;
-  }>;
-}
 
 // Получить детальную информацию о коллекции
 export async function getCollectionDetailById(id: number) {

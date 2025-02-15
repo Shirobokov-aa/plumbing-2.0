@@ -1,10 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import type { Product } from "../types"
-
-interface ProductCardProps {
-  product: Product
-}
 
 export function ProductCard({ product }: ProductCardProps) {
   const mainImage = product.images[0]

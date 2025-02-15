@@ -37,9 +37,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
             {product.variants.length > 0 && <ProductVariants variants={product.variants} />}
 
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
-              <ProductSpecifications specifications={product.specifications} />
-            )}
+            {(product.specifications &&
+              typeof product.specifications === 'object' &&
+              Object.keys(product.specifications).length > 0) ? (
+                <ProductSpecifications specifications={product.specifications as Record<string, string>} />
+            ) : null}
           </div>
         </div>
       </div>
