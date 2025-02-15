@@ -2,14 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { useFieldArray, Control } from "react-hook-form"
+import { useFieldArray, Control, useFormContext } from "react-hook-form"
 import { X } from "lucide-react"
 import { ImageUpload as SingleImageUpload } from "@/components/ui/image-upload"
-import type { FormData } from "./CollectionDetailForm"
 
 interface ImageUploadProps {
-  name: `sections${number}.${number}.images`
-  control: Control<FormData>
+  name: `sections1.${number}.images` | `sections2.${number}.images` | `sections3.${number}.images` | `sections4.${number}.images`
+  control: Control<CollectionDetailInput>
 }
 
 export function ImageUpload({ name, control }: ImageUploadProps) {
@@ -17,6 +16,14 @@ export function ImageUpload({ name, control }: ImageUploadProps) {
     control,
     name,
   })
+  const form = useFormContext()
+
+  const handleImageChange = (index: number, value: string) => {
+    const field = fields[index]
+    if (field) {
+      field.src = value
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -32,7 +39,14 @@ export function ImageUpload({ name, control }: ImageUploadProps) {
                   <FormControl>
                     <SingleImageUpload
                       value={imageField.value}
-                      onChange={imageField.onChange}
+                      onChange={(value) => {
+                        imageField.onChange(value)
+                        form.setValue(`${name}.${index}.src`, value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                        handleImageChange(index, value)
+                      }}
                       className="w-full"
                       height={200}
                     />
@@ -47,7 +61,14 @@ export function ImageUpload({ name, control }: ImageUploadProps) {
                 <FormItem>
                   <FormLabel>Alt текст</FormLabel>
                   <FormControl>
-                    <input {...altField} className="w-full p-2 border rounded" />
+                    <input
+                      {...altField}
+                      className="w-full p-2 border rounded"
+                      onChange={(e) => {
+                        altField.onChange(e)
+                        field.alt = e.target.value
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}

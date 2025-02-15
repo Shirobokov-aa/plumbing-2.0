@@ -45,7 +45,7 @@ const defaultSection = {
   titleDesc: "",
   descriptionDesc: "",
   order: 0,
-  images: []
+  images: [] as Array<{ src: string; alt: string; order: number }>
 };
 
 export function CollectionDetailForm({ initialData, action }: CollectionDetailFormProps) {
@@ -58,10 +58,22 @@ export function CollectionDetailForm({ initialData, action }: CollectionDetailFo
       bannerDescription: initialData?.bannerDescription || '',
       bannerLinkText: initialData?.bannerLinkText || '',
       bannerLinkUrl: initialData?.bannerLinkUrl || '',
-      sections1: initialData?.sections1?.length ? initialData.sections1 : [{ ...defaultSection }],
-      sections2: initialData?.sections2?.length ? initialData.sections2 : [{ ...defaultSection }],
-      sections3: initialData?.sections3?.length ? initialData.sections3 : [{ ...defaultSection }],
-      sections4: initialData?.sections4?.length ? initialData.sections4 : [{ ...defaultSection }]
+      sections1: initialData?.sections1?.length ? initialData.sections1.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections2: initialData?.sections2?.length ? initialData.sections2.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections3: initialData?.sections3?.length ? initialData.sections3.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections4: initialData?.sections4?.length ? initialData.sections4.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }]
     }
   })
 

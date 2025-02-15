@@ -3,6 +3,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -576,4 +577,56 @@ export const productVariantsRelations = relations(productVariants, ({ one }) => 
 
 export const productCategoriesRelations = relations(productCategories, ({ many }) => ({
   products: many(products),
+}))
+
+// Relations для секций и изображений
+export const collectionSections1Relations = relations(collectionSections1, ({ many }) => ({
+  images: many(collectionSectionImages, {
+    relationName: 'section1Images',
+    filterFn: (images) => eq(images.sectionType, 'section1')
+  })
+}))
+
+export const collectionSections2Relations = relations(collectionSections2, ({ many }) => ({
+  images: many(collectionSectionImages, {
+    relationName: 'section2Images',
+    filterFn: (images) => eq(images.sectionType, 'section2')
+  })
+}))
+
+export const collectionSections3Relations = relations(collectionSections3, ({ many }) => ({
+  images: many(collectionSectionImages, {
+    relationName: 'section3Images',
+    filterFn: (images) => eq(images.sectionType, 'section3')
+  })
+}))
+
+export const collectionSections4Relations = relations(collectionSections4, ({ many }) => ({
+  images: many(collectionSectionImages, {
+    relationName: 'section4Images',
+    filterFn: (images) => eq(images.sectionType, 'section4')
+  })
+}))
+
+export const collectionSectionImagesRelations = relations(collectionSectionImages, ({ one }) => ({
+  section1: one(collectionSections1, {
+    relationName: 'section1Images',
+    fields: [collectionSectionImages.sectionId],
+    references: [collectionSections1.id]
+  }),
+  section2: one(collectionSections2, {
+    relationName: 'section2Images',
+    fields: [collectionSectionImages.sectionId],
+    references: [collectionSections2.id]
+  }),
+  section3: one(collectionSections3, {
+    relationName: 'section3Images',
+    fields: [collectionSectionImages.sectionId],
+    references: [collectionSections3.id]
+  }),
+  section4: one(collectionSections4, {
+    relationName: 'section4Images',
+    fields: [collectionSectionImages.sectionId],
+    references: [collectionSections4.id]
+  })
 }))

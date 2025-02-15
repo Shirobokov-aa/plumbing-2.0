@@ -138,7 +138,7 @@ export function SectionFields({ type, index, control, remove }: SectionFieldsPro
         />
 
         <ImageUpload
-          name={`${fieldName}.${index}.images` as `${typeof fieldName}.${number}.images`}
+          name={`${fieldName}.${index}.images`}
           control={control}
         />
       </CardContent>
