@@ -11,10 +11,18 @@ import Image from "next/image"
 
 export default function Section4Admin() {
   const { sections, updateSection } = useSections()
-  const [sectionData, setSectionData] = useState(sections["section-4"])
+  const [sectionData, setSectionData] = useState(sections?.["section-4"] || {
+    title: "",
+    description: "",
+    link: { name: "", url: "" },
+    images: [],
+    images_block: []
+  })
 
   useEffect(() => {
-    setSectionData(sections["section-4"])
+    if (sections?.["section-4"]) {
+      setSectionData(sections["section-4"])
+    }
   }, [sections])
 
   const handleSave = () => {

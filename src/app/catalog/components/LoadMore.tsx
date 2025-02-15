@@ -2,14 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 
-interface LoadMoreProps {
-  currentPage: number
-  totalPages: number
-  totalItems: number
-  itemsPerPage: number
-}
-
-export function LoadMore({ currentPage, totalPages, totalItems, itemsPerPage }: LoadMoreProps) {
+export function LoadMore({ currentPage, totalItems, itemsPerPage }: LoadMoreProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -25,7 +18,7 @@ export function LoadMore({ currentPage, totalPages, totalItems, itemsPerPage }: 
   return (
     <div className="mt-8 text-center">
       <div className="text-sm text-gray-500 mb-2">
-        {startItem} из {totalItems}
+        {startItem}-{endItem} из {totalItems}
       </div>
       <button
         onClick={handleLoadMore}

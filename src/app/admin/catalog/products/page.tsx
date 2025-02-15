@@ -19,7 +19,7 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      <ProductList products={products} />
+      <ProductList products={products as Product[]} />
     </div>
   )
 }

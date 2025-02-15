@@ -1,14 +1,5 @@
 import Link from "next/link";
-// import Image from "next/image";
-import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
 import ImageBlock from "../blocks/image-block";
-
-interface KitchenSectionCollectionProps {
-  title: string;
-  description: string;
-  link: { text: string; url: string };
-  images: ImageBlockData[];
-}
 
 export default function KitchenCollection({ title, description, link, images }: KitchenSectionCollectionProps) {
   return (

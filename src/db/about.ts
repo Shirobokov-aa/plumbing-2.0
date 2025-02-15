@@ -1,6 +1,5 @@
 import { db } from "@/db"
 import { aboutBanner, aboutSections } from "./schema"
-import { inArray } from "drizzle-orm"
 
 export async function getAboutBanner() {
   const [banner] = await db.select().from(aboutBanner)
