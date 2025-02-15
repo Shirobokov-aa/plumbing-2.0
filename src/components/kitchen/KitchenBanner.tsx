@@ -1,13 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-interface KitchenProps {
-  name: string
-  image: string
-  title: string
-  description: string
-  link: { text: string; url: string }
-}
+
 
 export default function KitchenBanner({ image, title, description, link }: KitchenProps) {
   return (

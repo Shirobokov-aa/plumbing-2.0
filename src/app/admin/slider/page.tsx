@@ -24,7 +24,10 @@ export default function SliderAdminPage() {
     const loadData = async () => {
       const data = await getSlides()
       if (data.length > 0) {
-        setSlides(data)
+        setSlides(data.map(slide => ({
+          ...slide,
+          order: slide.order ?? 0  // Установка значения по умолчанию, если order равен null
+        })))
       }
     }
     loadData()

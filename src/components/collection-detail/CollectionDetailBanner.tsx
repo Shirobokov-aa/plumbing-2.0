@@ -1,15 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 
-interface BannerProps {
-  name: string
-  image: string
-  title: string
-  description: string
-  link: { text: string; url: string }
-}
 
-export default function CollectionDetailBanner({ name, image, title, description, link }: BannerProps) {
+export default function CollectionDetailBanner({ name, image, title, description, link }: CollectionBannerProps) {
   return (
     <section>
       <div className="lg:text-h2 text-h2Lg text-center pt-10 lg:font-bold uppercase">{name}</div>

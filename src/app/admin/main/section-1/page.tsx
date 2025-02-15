@@ -12,7 +12,7 @@ import Image from "next/image"
 
 export default function Section1Admin() {
   const { sections, updateSection } = useSections()
-  const [sectionData, setSectionData] = useState(sections["section-1"] || {
+  const [sectionData, setSectionData] = useState(sections?.["section-1"] || {
     title: "",
     description: "",
     link: { name: "", url: "" },
@@ -21,7 +21,7 @@ export default function Section1Admin() {
   })
 
   useEffect(() => {
-    if (sections["section-1"]) {
+    if (sections?.["section-1"]) {
       setSectionData(sections["section-1"])
     }
   }, [sections])
