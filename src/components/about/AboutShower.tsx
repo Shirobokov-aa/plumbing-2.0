@@ -1,9 +1,6 @@
 "use client"
 
-interface AboutSectionProps {
-  title: string;
-  description: string;
-}
+
 
 export default function AboutShower({ title, description }: AboutSectionProps) {
   return (

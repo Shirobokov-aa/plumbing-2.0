@@ -1,19 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-// import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
 
-interface SectionProps {
-  title: string;
-  description: string;
-  linkText?: string;
-  linkUrl?: string;
-  titleDesc?: string;
-  descriptionDesc?: string;
-  images: Array<{ src: string; alt: string; order: number }>;
-  reverse?: boolean;
-}
-
-export default function CollectionDetailSection({
+export default function CollectionDetailSection2({
   title,
   description,
   linkText,
@@ -21,7 +9,7 @@ export default function CollectionDetailSection({
   images,
   titleDesc,
   descriptionDesc,
-}: SectionProps) {
+}: CollectionSection2Props) {
   return (
     <section>
       <div className="max-w-1440 mx-auto lg:px-24 px-5 pt-48">

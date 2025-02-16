@@ -6,74 +6,25 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 // import { Textarea } from "@/components/ui/textarea"
-import { insertCollectionDetailSchema } from "@/db/schema"
+// import { insertCollectionDetailSchema } from "@/db/schema"
 import { createCollectionDetail, updateCollectionDetail } from "@/app/actions/collection-detail"
 import { useRouter } from "next/navigation"
 // import type { CollectionDetail } from "@/db/schema"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SectionFields } from "./SectionFields"
-import type { z } from "zod"
+// import type { z } from "zod"
 // import Image from "next/image"
 import { ImageUpload } from "@/components/ui/image-upload"
+// import { useState } from "react"
+
 
 interface CollectionDetailFormProps {
-  initialData?: {
-    id: number;
-    name: string;
-    bannerImage: string;
-    bannerTitle: string;
-    bannerDescription: string;
-    bannerLinkText: string;
-    bannerLinkUrl: string;
-    sections1: Array<{
-      title: string;
-      description: string;
-      linkText?: string;
-      linkUrl?: string;
-      order: number;
-      images: Array<{ src: string; alt: string; order: number }>;
-    }>;
-    sections2: Array<{
-      title: string;
-      description: string;
-      linkText?: string;
-      linkUrl?: string;
-      titleDesc?: string;
-      descriptionDesc?: string;
-      order: number;
-      images: Array<{ src: string; alt: string; order: number }>;
-    }>;
-    sections3: Array<{
-      title: string;
-      description: string;
-      linkText?: string;
-      linkUrl?: string;
-      order: number;
-      images: Array<{ src: string; alt: string; order: number }>;
-    }>;
-    sections4: Array<{
-      title: string;
-      description: string;
-      order: number;
-      images: Array<{ src: string; alt: string; order: number }>;
-    }>;
-  };
-  action: "add" | "edit";
+  initialData: CollectionDetailData | null
+  action: 'create' | 'edit'
 }
 
-export type FormData = z.infer<typeof insertCollectionDetailSchema> & {
-  [K in 'sections1s' | 'sections2s' | 'sections3s' | 'sections4s']: Array<{
-    title: string;
-    description: string;
-    order: number;
-    linkText?: string;
-    linkUrl?: string;
-    titleDesc?: string;
-    descriptionDesc?: string;
-    images: Array<{ src: string; alt: string; order: number }>;
-  }>;
-};
+type FormData = CollectionDetailInput;
 
 // type SectionType = {
 //   title: string;
@@ -94,23 +45,35 @@ const defaultSection = {
   titleDesc: "",
   descriptionDesc: "",
   order: 0,
-  images: []
+  images: [] as Array<{ src: string; alt: string; order: number }>
 };
 
 export function CollectionDetailForm({ initialData, action }: CollectionDetailFormProps) {
   const router = useRouter()
   const form = useForm<FormData>({
     defaultValues: {
-      name: initialData?.name ?? "",
-      bannerImage: initialData?.bannerImage ?? "",
-      bannerTitle: initialData?.bannerTitle ?? "",
-      bannerDescription: initialData?.bannerDescription ?? "",
-      bannerLinkText: initialData?.bannerLinkText ?? "",
-      bannerLinkUrl: initialData?.bannerLinkUrl ?? "",
-      sections1: initialData?.sections1?.length ? initialData.sections1 : [{ ...defaultSection }],
-      sections2: initialData?.sections2?.length ? initialData.sections2 : [{ ...defaultSection }],
-      sections3: initialData?.sections3?.length ? initialData.sections3 : [{ ...defaultSection }],
-      sections4: initialData?.sections4?.length ? initialData.sections4 : [{ ...defaultSection }]
+      name: initialData?.name || '',
+      bannerImage: initialData?.bannerImage || '',
+      bannerTitle: initialData?.bannerTitle || '',
+      bannerDescription: initialData?.bannerDescription || '',
+      bannerLinkText: initialData?.bannerLinkText || '',
+      bannerLinkUrl: initialData?.bannerLinkUrl || '',
+      sections1: initialData?.sections1?.length ? initialData.sections1.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections2: initialData?.sections2?.length ? initialData.sections2.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections3: initialData?.sections3?.length ? initialData.sections3.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }],
+      sections4: initialData?.sections4?.length ? initialData.sections4.map(s => ({
+        ...s,
+        images: s.images || []
+      })) : [{ ...defaultSection }]
     }
   })
 
@@ -132,7 +95,7 @@ export function CollectionDetailForm({ initialData, action }: CollectionDetailFo
     try {
       if (action === "edit" && initialData?.id) {
         await updateCollectionDetail(initialData.id, data)
-      } else if (action === "add") {
+      } else if (action === "create") {
         await createCollectionDetail(data)
       }
       router.push("/admin/collection-detail")
@@ -272,7 +235,7 @@ export function CollectionDetailForm({ initialData, action }: CollectionDetailFo
         </Tabs>
 
         <Button type="submit">
-          {action === "add" ? "Создать" : "Сохранить"}
+          {action === "create" ? "Создать" : "Сохранить"}
         </Button>
       </form>
     </Form>

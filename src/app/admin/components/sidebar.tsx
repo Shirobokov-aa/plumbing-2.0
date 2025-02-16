@@ -24,6 +24,15 @@ export function Sidebar() {
       ],
     },
     {
+      title: "Каталог",
+      items: [
+        { title: "Все товары", href: "/admin/catalog/products" },
+        { title: "Добавить товар", href: "/admin/catalog/products/add" },
+        { title: "Категории", href: "/admin/catalog/categories" },
+        { title: "Добавить категорию", href: "/admin/catalog/categories/add" },
+      ],
+    },
+    {
       title: "Коллекции",
       items: [
         { title: "Все коллекции", href: "/admin/collections" },

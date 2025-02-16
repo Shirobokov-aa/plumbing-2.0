@@ -1,18 +1,11 @@
 import Image from "next/image"
 import Link from "next/link"
 
-interface AboutProps {
-  name: string
-  image: string
-  title: string
-  description: string
-  link: { text: string; url: string }
-}
+
 
 export default function AboutBanner({ image, title, description, link }: AboutProps) {
   return (
     <section>
-      {/* <div className="lg:text-h2 text-h2Lg text-center pt-10 lg:font-bold uppercase">{name}</div> */}
       <div className="w-full h-[800px] relative mt-10">
         <Image src={image || "/placeholder.svg"} alt={title} layout="fill" objectFit="cover" quality={100} priority />
         <div className="absolute inset-0 flex justify-center text-white text-center bg-black/50">

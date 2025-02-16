@@ -33,7 +33,32 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const initialData = await getBathroomPageData()
+  const data = await getBathroomPageData()
+
+  const initialData = {
+    banner: data.banner,
+    sections: data.sections.map(section => ({
+      id: section.id,
+      title: section.title,
+      description: section.description,
+      linkText: section.link.text,
+      linkUrl: section.link.url,
+      order: section.order,
+      createdAt: null,
+      updatedAt: null,
+      images: section.images.map((img, index) => ({
+        id: index + 1,
+        src: img.src,
+        alt: img.alt,
+        order: img.order,
+        sectionId: null,
+        collectionId: null,
+        createdAt: null,
+        updatedAt: null
+      }))
+    })),
+    collections: data.collections
+  }
 
   return (
     <html lang="en" className={inter.variable}>

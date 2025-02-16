@@ -1,13 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { ImageBlockData } from "../../app/admin/contexts/SectionsContext";
-
-interface BathSectionProps {
-  title: string;
-  description: string;
-  link: { text: string; url: string };
-  images: ImageBlockData[];
-}
 
 export default function BathShower({ title, description, link, images }: BathSectionProps) {
   return (
