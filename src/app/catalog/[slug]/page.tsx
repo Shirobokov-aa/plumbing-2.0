@@ -7,13 +7,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 interface ProductPageProps {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductBySlug(params.slug);
+  const { slug } = await params
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
@@ -24,7 +23,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Header defaultTextColor="text-black" activeTextColor="text-black" />
       <div className="container mx-auto px-4 py-8 mt-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ProductGallery images={product.images || []} productName={product.name} />
+          <ProductGallery
+            images={product.images?.map(img => ({
+              ...img,
+              alt: img.alt ?? undefined
+            })) || []}
+            productName={product.name}
+          />
           <div>
             <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             {product.article && <p className="text-gray-500 mt-2">Артикул: {product.article}</p>}
@@ -35,12 +40,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            {product.variants.length > 0 && <ProductVariants variants={product.variants} />}
+            {product.variants.length > 0 && (
+              <ProductVariants
+                variants={product.variants.map(v => ({
+                  ...v,
+                  available: v.available ?? false
+                }))}
+              />
+            )}
 
             {(product.specifications &&
-              typeof product.specifications === 'object' &&
               Object.keys(product.specifications).length > 0) ? (
-                <ProductSpecifications specifications={product.specifications as Record<string, string>} />
+                <ProductSpecifications
+                  specifications={product.specifications as Record<string, string>}
+                  onChange={() => {}}
+                />
             ) : null}
           </div>
         </div>

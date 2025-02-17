@@ -17,7 +17,7 @@ if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Please provide NEXTAUTH_SECRET environment variable")
 }
 
-const authOptions: AuthOptions = {
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
