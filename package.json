@@ -32,6 +32,7 @@
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "pg": "^8.13.1",
+    "postgres": "^3.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
