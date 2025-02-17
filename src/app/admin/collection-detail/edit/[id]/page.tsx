@@ -2,16 +2,11 @@ import { CollectionDetailForm } from "../../CollectionDetailForm"
 import { getCollectionDetailWithSections } from "@/db/collection-details"
 import { notFound } from "next/navigation"
 
-// Правильное определение типов для параметров страницы
-type PageProps = {
-  params: Promise<{ id: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
 export default async function EditCollectionPage({
   params,
-  searchParams
-}: PageProps) {
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await params
 
   if (isNaN(Number(id))) {
