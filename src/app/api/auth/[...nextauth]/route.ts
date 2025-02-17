@@ -2,11 +2,22 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { AuthOptions } from "next-auth"
 
+declare module "next-auth" {
+  interface User {
+    role?: string;
+  }
+  interface Session {
+    user: User & {
+      role?: string;
+    };
+  }
+}
+
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Please provide NEXTAUTH_SECRET environment variable")
 }
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
