@@ -19,8 +19,8 @@ export default function BathroomSectionsAdminPage() {
       title: section.title || '',
       description: section.description || '',
       link: {
-        text: section.link?.text || '',
-        url: section.link?.url || ''
+        text: section.linkText || '',
+        url: section.linkUrl || ''
       },
       images: section.images?.map(img => ({
         src: img.src || '',
