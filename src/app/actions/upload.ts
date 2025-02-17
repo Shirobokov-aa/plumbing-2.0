@@ -22,7 +22,7 @@ export async function uploadImage(formData: FormData) {
     try {
       await mkdir(uploadDir, { recursive: true })
     } catch (error) {
-      console.log('Directory exists or cannot be created')
+      console.log('Directory exists or cannot be created:', error)
     }
 
     const path = join(uploadDir, uniqueFilename)
