@@ -142,7 +142,7 @@ export function ProductForm({ categories, product, isEdit }: ProductFormProps) {
       </div>
 
       <ProductSpecifications
-        specifications={formData.specifications}
+        specifications={formData.specifications || {}}
         onChange={(specs) => setFormData(prev => ({
           ...prev,
           specifications: specs
