@@ -10,7 +10,12 @@ export async function getCategories (): Promise<Category[]> {
   try {
     const categories = await db.select().from(productCategories)
       .orderBy(productCategories.order)
-    return categories
+
+    return categories.map(category => ({
+      ...category,
+      subcategories: [],  // добавляем пустой массив подкатегорий
+      images: []          // добавляем пустой массив изображений
+    }))
   } catch (error) {
     console.error('Error getting categories:', error)
     return []
