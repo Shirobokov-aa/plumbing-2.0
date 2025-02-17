@@ -10,6 +10,7 @@ interface EditProductPageProps {
 
 export default async function EditProductPage({
   params,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _searchParams
 }: EditProductPageProps) {
   const [product, categories] = await Promise.all([
