@@ -2,11 +2,14 @@ import { CollectionDetailForm } from "../../CollectionDetailForm"
 import { getCollectionDetailWithSections } from "@/db/collection-details"
 import { notFound } from "next/navigation"
 
-export default async function EditCollectionDetailPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+// Правильное определение типов для параметров страницы
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function EditCollectionPage({ params }: Props) {
   const id = Number(await params.id)
 
   if (isNaN(id)) {
