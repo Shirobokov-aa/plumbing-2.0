@@ -4,9 +4,13 @@ import { CollectionContent } from "@/app/collections/collection-detail/[id]/Coll
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
 export default async function CollectionDetailPage({ params }: PageProps) {
-  const resolvedParams = await Promise.resolve(params)
-  const collectionId = parseInt(resolvedParams.id)
+  const { id } = await params;
+  const collectionId = parseInt(id)
 
   if (isNaN(collectionId)) {
     notFound()
