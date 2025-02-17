@@ -7,7 +7,7 @@ export default async function EditCollectionDetailPage({
 }: {
   params: { id: string }
 }) {
-  const id = Number(params.id)
+  const id = Number(await params.id)
 
   if (isNaN(id)) {
     notFound()
