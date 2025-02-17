@@ -21,8 +21,8 @@ export async function uploadImage(formData: FormData) {
     const uploadDir = join(process.cwd(), 'public', 'images', 'catalog')
     try {
       await mkdir(uploadDir, { recursive: true })
-    } catch (error) {
-      console.log('Directory exists or cannot be created:', error)
+    } catch {
+      console.log('Directory exists or cannot be created')
     }
 
     const path = join(uploadDir, uniqueFilename)
