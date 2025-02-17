@@ -3,7 +3,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { relations, sql } from "drizzle-orm";
-import { eq } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -353,17 +352,11 @@ export const bathroomImages = pgTable('bathroom_images', {
 
 // Relations для ванной
 export const bathroomSectionsRelations = relations(bathroomSections, ({ many }) => ({
-  images: many(bathroomImages, {
-    fields: [bathroomSections.id],
-    references: [bathroomImages.sectionId],
-  })
+  images: many(bathroomImages)
 }))
 
 export const bathroomCollectionsRelations = relations(bathroomCollections, ({ many }) => ({
-  images: many(bathroomImages, {
-    fields: [bathroomCollections.id],
-    references: [bathroomImages.collectionId],
-  })
+  images: many(bathroomImages)
 }))
 
 export const bathroomImagesRelations = relations(bathroomImages, ({ one }) => ({
@@ -440,17 +433,11 @@ export const kitchenImages = pgTable('kitchen_images', {
 
 // Relations для кухни
 export const kitchenSectionsRelations = relations(kitchenSections, ({ many }) => ({
-  images: many(kitchenImages, {
-    fields: [kitchenSections.id],
-    references: [kitchenImages.sectionId],
-  })
+  images: many(kitchenImages)
 }))
 
 export const kitchenCollectionsRelations = relations(kitchenCollections, ({ many }) => ({
-  images: many(kitchenImages, {
-    fields: [kitchenCollections.id],
-    references: [kitchenImages.collectionId],
-  })
+  images: many(kitchenImages)
 }))
 
 export const kitchenImagesRelations = relations(kitchenImages, ({ one }) => ({
@@ -582,29 +569,25 @@ export const productCategoriesRelations = relations(productCategories, ({ many }
 // Relations для секций и изображений
 export const collectionSections1Relations = relations(collectionSections1, ({ many }) => ({
   images: many(collectionSectionImages, {
-    relationName: 'section1Images',
-    filterFn: (images) => eq(images.sectionType, 'section1')
+    relationName: 'section1Images'
   })
 }))
 
 export const collectionSections2Relations = relations(collectionSections2, ({ many }) => ({
   images: many(collectionSectionImages, {
-    relationName: 'section2Images',
-    filterFn: (images) => eq(images.sectionType, 'section2')
+    relationName: 'section2Images'
   })
 }))
 
 export const collectionSections3Relations = relations(collectionSections3, ({ many }) => ({
   images: many(collectionSectionImages, {
-    relationName: 'section3Images',
-    filterFn: (images) => eq(images.sectionType, 'section3')
+    relationName: 'section3Images'
   })
 }))
 
 export const collectionSections4Relations = relations(collectionSections4, ({ many }) => ({
   images: many(collectionSectionImages, {
-    relationName: 'section4Images',
-    filterFn: (images) => eq(images.sectionType, 'section4')
+    relationName: 'section4Images'
   })
 }))
 
