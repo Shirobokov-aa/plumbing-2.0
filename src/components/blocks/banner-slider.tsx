@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getSlides } from "@/app/actions/slider";
 
 const SLIDE_DURATION = 4000;
+const SLIDE_DURATION_CSS = `${SLIDE_DURATION}ms`;
 
 export function BannerSlider() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -122,7 +123,7 @@ export function BannerSlider() {
         {slides.map((_, index) => (
           <div key={index} className="h-[2px] flex-1 bg-white/30 relative overflow-hidden">
             <div
-              className={`absolute inset-0 bg-white transition-all duration-[${SLIDE_DURATION}ms] ${
+              className={`absolute inset-0 bg-white transition-all duration-[${SLIDE_DURATION_CSS}] ${
                 index === currentSlide ? "w-full" : "w-0"
               }`}
             />

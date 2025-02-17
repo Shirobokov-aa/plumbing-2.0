@@ -6,6 +6,10 @@ body {
   font-family: var(--font-inter), sans-serif;
 }
 
+:root {
+  --slide-duration: 300ms;
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
