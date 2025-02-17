@@ -32,9 +32,10 @@ export async function getMainSections(): Promise<FormattedSection> {
         images: mainImages.map(img => img.src),
         images_block: blockImages.map(img => ({
           src: img.src,
-          alt: img.alt || undefined,
-          desc: img.desc || undefined,
-          url: img.url || undefined
+          alt: img.alt || '',
+          desc: img.desc || '',
+          url: img.url || '',
+          order: img.order || 0
         }))
       }
       return acc
