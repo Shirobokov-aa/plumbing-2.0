@@ -3,16 +3,17 @@ import { getCategories } from "@/app/actions/catalog"
 import { ProductForm } from "../../components/ProductForm"
 import { notFound } from "next/navigation"
 
-interface EditProductPageProps {
+
+type PageProps = {
   params: { id: string }
-  _searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Record<string, string | string[] | undefined>
 }
 
 export default async function EditProductPage({
   params,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _searchParams
-}: EditProductPageProps) {
+  searchParams
+}: PageProps) {
   const [product, categories] = await Promise.all([
     getProductForEdit(Number(params.id)),
     getCategories()
