@@ -8,22 +8,23 @@ import { Suspense } from "react";
 import { LoadMore } from "./components/LoadMore";
 
 interface CatalogPageProps {
-  searchParams: {
+  searchParams: Promise<{
     category?: string;
     page?: string;
     filters?: string;
     search?: string;
-  };
+  }>;
 }
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
-  const page = Number(searchParams.page) || 1;
-  const filters = searchParams.filters?.split(',') || [];
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  const filters = params.filters?.split(',') || [];
 
   const { products, totalCount, currentPage, totalPages } = await getProducts({
     page,
     filters,
-    search: searchParams.search
+    search: params.search
   });
 
   return (

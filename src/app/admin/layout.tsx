@@ -2,7 +2,7 @@ import type React from "react"
 import { Sidebar } from "./components/sidebar"
 import { SectionsProvider } from "./contexts/SectionsContext"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../api/auth/[...nextauth]/route"
+import { authOptions } from "../api/auth/[...nextauth]/options"
 import { getBathroomPageData } from "@/db/bathroom"
 
 export default async function AdminLayout({
