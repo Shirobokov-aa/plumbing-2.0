@@ -17,8 +17,8 @@ export default function BathroomBannerAdminPage() {
     description: bathroomPage?.banner?.description || '',
     image: bathroomPage?.banner?.image || '',
     link: {
-      text: bathroomPage?.banner?.link?.text || '',
-      url: bathroomPage?.banner?.link?.url || ''
+      text: bathroomPage?.banner?.linkText || '',
+      url: bathroomPage?.banner?.linkUrl || ''
     }
   })
 
