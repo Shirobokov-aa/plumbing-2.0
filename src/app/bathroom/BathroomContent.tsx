@@ -47,7 +47,8 @@ export default function BathroomContent({ initialData }: BathroomContentProps) {
     images: section.images.map(img => ({
       src: img.src,
       alt: img.alt || '',
-      desc: ''
+      desc: '',
+      order: img.order || 0
     }))
   }))
 
@@ -61,7 +62,8 @@ export default function BathroomContent({ initialData }: BathroomContentProps) {
     images: collection.images.map(img => ({
       src: img.src,
       alt: img.alt || '',
-      desc: ''
+      desc: '',
+      order: img.order || 0
     }))
   }))
 
