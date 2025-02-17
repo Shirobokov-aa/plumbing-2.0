@@ -3,20 +3,19 @@ import { getCollectionDetailWithSections } from "@/db/collection-details"
 import { notFound } from "next/navigation"
 
 // Правильное определение типов для параметров страницы
-type Props = {
-  params: {
-    id: string;
-  };
-};
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
-export default async function EditCollectionPage({ params }: Props) {
-  const id = Number(await params.id)
+export default async function EditCollectionPage({ params }: PageProps) {
+  const { id } = await params
 
-  if (isNaN(id)) {
+  if (isNaN(Number(id))) {
     notFound()
   }
 
-  const detail = await getCollectionDetailWithSections(id)
+  const detail = await getCollectionDetailWithSections(Number(id))
   if (!detail) {
     notFound()
   }
