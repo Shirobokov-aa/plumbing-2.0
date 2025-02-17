@@ -4,13 +4,14 @@ import { ProductForm } from "../../components/ProductForm"
 import { notFound } from "next/navigation"
 
 interface EditProductPageProps {
-  params: {
-    id: string
-  },
-  searchParams: { [key: string]: string | string[] | undefined }
+  params: { id: string }
+  _searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default async function EditProductPage({ params }: EditProductPageProps) {
+export default async function EditProductPage({
+  params,
+  _searchParams
+}: EditProductPageProps) {
   const [product, categories] = await Promise.all([
     getProductForEdit(Number(params.id)),
     getCategories()
