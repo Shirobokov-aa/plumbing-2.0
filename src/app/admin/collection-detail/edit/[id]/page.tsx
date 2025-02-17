@@ -5,10 +5,13 @@ import { notFound } from "next/navigation"
 // Правильное определение типов для параметров страницы
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function EditCollectionPage({ params }: PageProps) {
+export default async function EditCollectionPage({
+  params,
+  searchParams
+}: PageProps) {
   const { id } = await params
 
   if (isNaN(Number(id))) {
