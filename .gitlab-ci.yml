@@ -1,0 +1,50 @@
+stages:
+  - copy
+  - build
+  - deploy
+  - clean
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_BUILDKIT: 1
+  CACHE_KEEP_SIZE: 5GB
+  CACHE_MAX_AGE: 1h
+
+copy:
+  stage: copy
+  only:
+    - dev
+  script:
+    - echo "Copy new version..."
+    - find /srv/abelsberg/ -maxdepth 1 -not -name data -not -name abelsberg -exec rm -vR {} \;
+    - rsync -azvh --exclude '.git' --exclude '.gitattributes' --exclude '.gitlab-ci.yml' --exclude 'data' ./ /srv/abelsberg
+
+build:
+  stage: build
+  only:
+    - dev
+  script:
+    - echo "Build docker images..."
+    - docker compose -f /srv/abelsberg/docker-compose.yml build
+
+deploy:
+  stage: deploy
+  only:
+    - dev
+  script:
+    - echo "Deploying services..."
+    - docker compose -f /srv/abelsberg/docker-compose.yml down -v
+    - docker compose -f /srv/abelsberg/docker-compose.yml up -d
+
+clean:
+  stage: clean
+  only:
+    - dev
+  script:
+    - echo "Aggressive cleaning... "
+    - docker container prune -f
+    - docker network prune -f
+    - docker image prune -af --filter "until=$CACHE_MAX_AGE"
+    - docker volume prune -f
+    - docker builder prune -af --keep-storage=$CACHE_KEEP_SIZE --filter "until=$CACHE_MAX_AGE"
+  allow_failure: true

@@ -1,0 +1,1 @@
+ALTER TABLE "product_to_colors" ADD COLUMN "link_to_product" varchar(255);

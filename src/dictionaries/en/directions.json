@@ -1,0 +1,16 @@
+{
+  "title": "DIRECTIONS",
+  "bathroom": {
+    "title": "BATHROOM",
+    "description": "Stylish aesthetic mixers for bathrooms"
+  },
+  "kitchen": {
+    "title": "KITCHEN",
+    "description": "Technological and harmonious mixers for kitchen"
+  },
+  "collections": {
+    "title": "COLLECTIONS",
+    "description": "Classic and unique solutions and bright accent products"
+  },
+  "details": "more details"
+}

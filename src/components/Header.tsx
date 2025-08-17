@@ -1,217 +1,102 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
-import { Search, Menu, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import HoverMenu from "./HoverMenu"
-import { getCollections } from "@/app/actions/collections"
+"use client";
 
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Search, Menu } from "lucide-react";
+import MobileMenu from "@/components/header/mobile-menu";
+import DesktopMenu from "@/components/header/desktop-menu";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Dictionary, MenuItem } from "@/types/types";
 
-
-export default function Header({ defaultTextColor = "text-white", activeTextColor = "text-black" }: HeaderProps) {
-  const [isVisible, setIsVisible] = useState(true)
-  const [isAtTop, setIsAtTop] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [isMenuLocked, setIsMenuLocked] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [collections, setCollections] = useState<Array<{ name: string; id: number }>>([])
-
-  useEffect(() => {
-    const fetchCollections = async () => {
-      const response = await getCollections()
-      if (response.collections) {
-        setCollections(response.collections)
-      }
-    }
-    fetchCollections()
-  }, [])
-
-  const categories: MenuCategory[] = [
-    {
-      name: "Ванная",
-      subcategories: [
-        { name: "Смесители для ванной и душа", href: "/bathroom" },
-        { name: "Смесители для раковины", href: "/bathroom" },
-        { name: "Душевые системы", href: "/bathroom" },
-      ],
-      images: ["/img/item10.png", "/img/item11.png", "/img/item12.png"],
-    },
-    {
-      name: "Кухня",
-      subcategories: [
-        { name: "Смесители для кухни", href: "/kitchen" },
-        { name: "Аксессуары", href: "/kitchen" },
-      ],
-      images: ["", "/img/item11.png", "",],
-    },
-    {
-      name: "Коллекции",
-      subcategories: collections?.map((collection) => ({
-        name: collection.name,
-        href: `/collections/collection-detail/${collection.id}`,
-      })) || [],
-      images: ["/img/item11.png", "", ""],
-    },
-    // Добавьте остальные категории по необходимости
-  ]
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setIsAtTop(currentScrollY === 0)
-      if (currentScrollY < lastScrollY) {
-        setIsVisible(true)
-      } else if (currentScrollY > lastScrollY) {
-        setIsVisible(false)
-      }
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
-
-  const handleMouseEnter = (categoryName: string) => {
-    if (!isMenuLocked) {
-      setActiveCategory(categoryName)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (!isMenuLocked) {
-      setActiveCategory(null)
-    }
-  }
-
-  const handleClick = (categoryName: string) => {
-    if (activeCategory === categoryName && isMenuLocked) {
-      setIsMenuLocked(false)
-      setActiveCategory(null)
-    } else {
-      setIsMenuLocked(true)
-      setActiveCategory(categoryName)
-    }
-  }
-
-  const closeMenu = () => {
-    setIsMenuLocked(false)
-    setActiveCategory(null)
-  }
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  const isHeaderWhite = !isAtTop || activeCategory !== null || isMobileMenuOpen
-  const currentTextColor = isHeaderWhite ? activeTextColor : defaultTextColor
-
-  return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      } ${isHeaderWhite ? "bg-white shadow-md" : "bg-transparent"}`}
-    >
-      <div className="max-w-1440 mx-auto lg:px-24 px-5">
-        <nav className="flex items-center justify-between h-20 text-header">
-          <Link
-            href="/"
-            className={`lg:block hidden text-2xl font-bold ${currentTextColor}`}
-          >
-            <Image src="/img/logo.svg" alt="Logo" width={263} height={35} className="object-contain" />
-          </Link>
-          <Link
-            href="/"
-            className={`block lg:hidden text-2xl font-bold ${currentTextColor}`}
-          >
-            <Image src="/img/logo.svg" alt="Logo" width={168} height={22} className="object-contain" />
-          </Link>
-          <ul className="hidden lg:flex items-center space-x-8">
-            {categories.map((category) => (
-              <li
-                key={category.name}
-                className={`hover:opacity-80 transition-colors relative ${currentTextColor}`}
-                onMouseEnter={() => handleMouseEnter(category.name)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <Link href={""} onClick={() => handleClick(category.name)} className="py-2 block">
-                  {category.name}
-                </Link>
-                <div
-                  className={`absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 transition-transform duration-300 ${
-                    activeCategory === category.name ? "scale-x-100" : ""
-                  }`}
-                />
-              </li>
-            ))}
-            <li className={`hover:opacity-80 transition-colors ${currentTextColor}`}>
-              <Link href={"/"}>Сервисы</Link>
-            </li>
-            <li className={`hover:opacity-80 transition-colors ${currentTextColor}`}>
-              <Link href={"/about"}>О компании</Link>
-            </li>
-            <li className={`hover:opacity-80 transition-colors ${currentTextColor}`}>
-              <Link href={"/"}>Контакты</Link>
-            </li>
-          </ul>
-          <div className="flex items-center space-x-4">
-            <button
-              className={`p-2 rounded-full transition-colors ${isHeaderWhite ? "hover:bg-black/10" : "hover:bg-white/10"}`}
-            >
-              <Search className={`w-5 h-5 ${currentTextColor}`} />
-            </button>
-            <button
-              className={`lg:hidden p-2 rounded-full transition-colors ${
-                isHeaderWhite ? "hover:bg-black/10" : "hover:bg-white/10"
-              }`}
-              onClick={toggleMobileMenu}
-            >
-              {isMobileMenuOpen ? (
-                <X className={`w-6 h-6 ${currentTextColor}`} />
-              ) : (
-                <Menu className={`w-6 h-6 ${currentTextColor}`} />
-              )}
-            </button>
-          </div>
-        </nav>
-      </div>
-      {categories.map((category) => (
-        <HoverMenu
-          key={category.name}
-          category={category}
-          isVisible={activeCategory === category.name}
-          onClose={closeMenu}
-        />
-      ))}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white shadow-md">
-          <ul className="py-4">
-            {categories.map((category) => (
-              <li key={category.name} className="px-5 py-2">
-                <Link href={"/"} className={`block ${activeTextColor} hover:opacity-80 transition-colors`}>
-                  {category.name}
-                </Link>
-              </li>
-            ))}
-            <li className="px-5 py-2">
-              <Link href={"/"} className={`block ${activeTextColor} hover:opacity-80 transition-colors`}>
-                Сервисы
-              </Link>
-            </li>
-            <li className="px-5 py-2">
-              <Link href={"/"} className={`block ${activeTextColor} hover:opacity-80 transition-colors`}>
-                О компании
-              </Link>
-            </li>
-            <li className="px-5 py-2">
-              <Link href={"/"} className={`block ${activeTextColor} hover:opacity-80 transition-colors`}>
-                Контакты
-              </Link>
-            </li>
-          </ul>
-        </div>
-      )}
-    </header>
-  )
+interface HeaderProps {
+  lang: string;
+  dictionary: Dictionary;
+  theme?: "black" | "white";
+  menuData: MenuItem[]; // Новое свойство для передачи готовых данных меню
 }
 
+export default function HeaderResponsive({ lang, dictionary, theme = "white", menuData }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Защита от undefined в menuData
+  const safeMenuData = Array.isArray(menuData) ? menuData : [];
+
+  // Отладочная информация
+  useEffect(() => {
+    if (!Array.isArray(menuData) || menuData.length === 0) {
+      console.warn("Предупреждение: menuData не является массивом или пуст");
+    } else {
+      console.log("HeaderResponsive получил menuData:", menuData.length, "пунктов");
+    }
+  }, [menuData]);
+
+  // Предотвращаем прокрутку, когда меню открыто
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
+  const textColor = theme === "black" ? "text-black" : "text-white";
+  const logoSrc = theme === "black" ? "/image/logo-black.svg" : "/image/logo-white.svg";
+
+  return (
+    <>
+      <header className="absolute top-0 left-0 right-0 z-50 rounded-[10px] max-w-[1440px] mx-auto px-2 py-2 my-5">
+        <div className={`flex items-center justify-between p-4 ${textColor}`}>
+          <div className="burger-menu">
+            <button
+              className="flex flex-col space-y-1.5 focus:outline-none"
+              onClick={() => setIsMenuOpen(true)}
+              aria-label={dictionary.menu.open_menu}
+            >
+              <Menu className={`w-6 h-6 ${textColor}`} />
+            </button>
+          </div>
+          <div className="logo">
+            <Link href={`/${lang}`} className={`flex items-center gap-2 ${textColor}`}>
+              <Image src={logoSrc} alt="Logo" width={250} height={33} className="object-contain" priority  />
+            </Link>
+          </div>
+          <div className="search">
+            <Search className={`w-6 h-6 cursor-pointer ${textColor}`} />
+          </div>
+        </div>
+      </header>
+
+      {/* Отображаем соответствующее меню в зависимости от размера экрана */}
+      {isMobile ? (
+        <MobileMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          menuData={safeMenuData}
+          lang={lang}
+          dictionary={dictionary}
+        />
+      ) : (
+        <DesktopMenu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          menuData={safeMenuData}
+          lang={lang}
+          dictionary={dictionary}
+        />
+      )}
+
+      {/* Оверлей для затемнения фона при открытом меню (только для десктопа) */}
+      {isMenuOpen && !isMobile && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 transition-opacity duration-300"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
+      )}
+    </>
+  );
+}

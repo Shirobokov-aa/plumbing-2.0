@@ -1,0 +1,24 @@
+{
+  "products": "PRODUCTS",
+  "bathroom": {
+    "title": "BATHROOM",
+    "sink_mixers": "SINK MIXERS",
+    "bath_shower_mixers": "BATH & SHOWER MIXERS",
+    "shower_systems": "SHOWER SYSTEMS",
+    "toilets": "TOILETS"
+  },
+  "kitchen": {
+    "title": "KITCHEN",
+    "kitchen_mixers": "KITCHEN MIXERS",
+    "accessories": "ACCESSORIES",
+    "dispensers": "DISPENSERS"
+  },
+  "collections": "COLLECTIONS",
+  "about": "BRAND",
+  "warranty_service": "SERVICE",
+  "where_to_buy": "IDEAS",
+  "contacts": "CONTACTS",
+  "close": "Close",
+  "close_menu": "Close menu",
+  "open_menu": "Open menu"
+}

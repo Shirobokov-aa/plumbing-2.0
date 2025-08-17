@@ -1,1 +1,0 @@
-ALTER TABLE "collection_previews" ALTER COLUMN "image" SET DATA TYPE text;

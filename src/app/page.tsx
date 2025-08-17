@@ -1,19 +1,22 @@
-"use client";
+// import { getDictionary } from '@/dictionaries'
 
-import { BannerSlider } from "@/components/blocks/banner-slider";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import Main from "@/components/Main";
+// import Header from '@/components/Header';
+// import Main from '@/components/Main';
+// import Footer from "@/components/Footer";
 
-export default function Home() {
 
-  return (
-    <div>
-      <Header />
-      <BannerSlider />
-      <Main
-      />
-      <Footer />
-    </div>
-  );
+// export default function Home({ params: { lang } }: { params: { lang: 'en' | 'ru' } }) {
+//   const dictionary = await getDictionary(lang)
+
+//   return (
+//     <div>
+//       <Header />
+//       <Main lang={lang} dictionary={dictionary} />
+//       <Footer lang={lang} dictionary={dictionary} />
+//     </div>
+//   );
+// }
+
+export default function RootPage() {
+  return null; // Эта страница перенаправляется middleware
 }

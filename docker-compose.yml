@@ -1,43 +1,48 @@
+name: abelsberg-2.0
 services:
-  # simpllo:
-  #   container_name: simpllo-web
-  #   build: .
-  #   ports:
-  #     - "127.0.0.1:3000:3000"
-  #   environment:
-  #     NODE_ENV: production
-  #     DB_PASSWORD: "*a13*qgxZMe!Nk@8Om46$%7&"
-  #     DB_USERNAME: "postgres"
-  #     DB_DATABASE: "simpllo"
-  #     DB_HOST: "simpllo-database"
-  #     DB_PORT: "5432"
-  #     NEXT_PUBLIC_API_URL: "https://simpllo.ru"
-  #   depends_on:
-  #     - database
-  #   networks:
-  #     - simpllo
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      - HOSTNAME=0.0.0.0
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:123@database:5436/database_abelsber-2.0
+      - AUTH_URL=https://abelsberg.com
+      - NEXTAUTH_SECRET=P2FAfG/vbpXELKQ88TTY2UanVypNqiGqFOl1MkhAZ/w=
+      - AUTH_TRUST_HOST=true
+      - NEXTAUTH_URL=https://abelsberg.com
+      # Параметры для улучшения обновления данных
+      - NEXT_DISABLE_STATIC_OPTIMIZATION=true
+      - NEXT_PUBLIC_VERCEL_ENV=development
+      - NEXT_RUNTIME_CACHE_DISABLE=1
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - project-network
+    restart: always
 
-  database_abelsberg:
-    container_name: database_abelsberg
+  database:
     image: postgres:16.1-alpine
     restart: unless-stopped
-    user: 999:989
+    # user: 999:988
     environment:
       POSTGRES_PASSWORD: "123"
       POSTGRES_USER: "postgres"
-      POSTGRES_DB: "abelsberg"
-    # logging:
-    #   driver: syslog
-    #   options:
-    #     tag: swp/database
+      POSTGRES_DB: "database_abelsber-2.0"
     ports:
-      - "127.0.0.1:5432:5432"
+     - "127.0.0.1:5436:5432"
     volumes:
-      - ./data/abelsberg:/var/lib/postgresql/data
-#     networks:
-#       - simpllo
+      - ./data/abelsber-2.0:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - project-network
 
-# networks:
-#   simpllo:
-#     name: simpllo
-#     driver: bridge
+networks:
+  project-network:
+    driver: bridge

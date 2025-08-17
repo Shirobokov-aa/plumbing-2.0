@@ -1,0 +1,8 @@
+\i 'drizzle/0000_simple_power_man.sql'
+\i 'drizzle/0001_swift_bastion.sql'
+\i 'drizzle/0002_messy_brood.sql'
+\i 'drizzle/0003_unknown_cerebro.sql'
+\i 'drizzle/0004_create_directions_en.sql'
+\i 'drizzle/0004_left_nicolaos.sql'
+\i 'drizzle/0005_pink_sunfire.sql'
+\i 'drizzle/0006_classy_jocasta.sql'

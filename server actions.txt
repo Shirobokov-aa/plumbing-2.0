@@ -1,0 +1,16 @@
+// Пример server action с учетом локализации
+'use server'
+
+import { getDictionary } from '@/dictionaries'
+
+export async function submitForm(lang: 'en' | 'ru', formData: FormData) {
+  const dictionary = await getDictionary(lang)
+
+  // Обработка формы
+  // ...
+
+  return {
+    success: true,
+    message: lang === 'ru' ? 'Форма успешно отправлена' : 'Form submitted successfully'
+  }
+}

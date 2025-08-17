@@ -1,0 +1,8 @@
+# Только создание админа
+npx tsx src/db/seed/index.ts --admin-only
+
+# Только заполнение hero section
+npx tsx src/db/seed/index.ts --hero-only
+
+# Только заполнение directions
+npx tsx src/db/seed/index.ts --directions-only

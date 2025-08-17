@@ -1,0 +1,24 @@
+{
+  "products": "ПРОДУКТЫ",
+  "bathroom": {
+    "title": "ВАННАЯ КОМНАТА",
+    "sink_mixers": "СМЕСИТЕЛИ ДЛЯ РАКОВИНЫ",
+    "bath_shower_mixers": "СМЕСИТЕЛИ ДЛЯ ВАННОЙ И ДУША",
+    "shower_systems": "ДУШЕВЫЕ СИСТЕМЫ",
+    "toilets": "УНИТАЗЫ"
+  },
+  "kitchen": {
+    "title": "КУХНЯ",
+    "kitchen_mixers": "СМЕСИТЕЛИ ДЛЯ КУХНИ",
+    "accessories": "АКСЕССУАРЫ",
+    "dispensers": "ДИСПЕНСЕРЫ"
+  },
+  "collections": "КОЛЛЕКЦИИ",
+  "about": "БРЕНД",
+  "where_to_buy": "ИДЕИ",
+  "warranty_service": "СЕРВИС",
+  "contacts": "КОНТАКТЫ",
+  "close": "Закрыть",
+  "close_menu": "Закрыть меню",
+  "open_menu": "Открыть меню"
+}
